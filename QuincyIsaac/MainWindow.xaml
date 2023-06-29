@@ -4,9 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="夏老师dr快捷开关(兼容版)" Height="110" Width="315"
+        Title="夏老师的以撒快捷开关 V2.0" Height="150" Width="350"
         ResizeMode="CanMinimize"
-        Background="#FFECD8"
         Icon="Resources\icon.ico">
     <Window.Resources>
         <Style x:Key="enabledStyle">
@@ -26,51 +25,92 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition Height="5"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="132*"/>
-            <ColumnDefinition Width="26*"/>
-            <ColumnDefinition Width="79*"/>
-            <ColumnDefinition Width="79*"/>
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" 
+    <TabControl Background="#FFECD8">
+        <TabItem Header="模组&amp;控制台" FontSize="11">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition Height="5"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="135*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="72*"/>
+                    <ColumnDefinition Width="72*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" 
                    VerticalAlignment="Center" HorizontalAlignment="Left"
-                   FontSize="15" FontFamily="微软雅黑" FontWeight="Bold"
+                   FontSize="19" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
                    Name="l1">
                    是否启用模组
-        </TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="0"
+                </TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0"
                    VerticalAlignment="Center" HorizontalAlignment="Left"
-                   FontSize="15" FontFamily="微软雅黑" FontWeight="Bold"
+                   FontSize="19" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
                    Name="l2">
                    是否启用控制台
-        </TextBlock>
-        <RadioButton Grid.Column="2"
+                </TextBlock>
+                <RadioButton Grid.Column="2"
                      VerticalAlignment="Center" GroupName="mod"
-                     Name="mody" Checked="mody_Checked" Style="{StaticResource enabledStyle}" >
-            启用
-        </RadioButton>
-        <RadioButton Grid.Column="2"
+                     Name="mody" Checked="mody_Checked" Style="{StaticResource enabledStyle}" 
+                             FontSize="14" VerticalContentAlignment="Center">
+                    启用
+                </RadioButton>
+                <RadioButton Grid.Column="2"
                      VerticalAlignment="Center" GroupName="mod"
-                     Name="modn" Checked="modn_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}">
-            禁用
-        </RadioButton>
-        <RadioButton Grid.Row="1" Grid.Column="2"
+                     Name="modn" Checked="modn_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}"
+                             FontSize="14" VerticalContentAlignment="Center">
+                    禁用
+                </RadioButton>
+                <RadioButton Grid.Row="1" Grid.Column="2"
                      VerticalAlignment="Center" GroupName="console"
-                     Name="cony" Checked="cony_Checked" Style="{StaticResource enabledStyle}">
-            启用
-        </RadioButton>
-        <RadioButton Grid.Row="1" Grid.Column="2"
+                     Name="cony" Checked="cony_Checked" Style="{StaticResource enabledStyle}" 
+                             FontSize="14" VerticalContentAlignment="Center">
+                    启用
+                </RadioButton>
+                <RadioButton Grid.Row="1" Grid.Column="2"
                      VerticalAlignment="Center" GroupName="console"
-                     Name="conn" Checked="conn_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}">
-            禁用
-        </RadioButton>
-    </Grid>
+                     Name="conn" Checked="conn_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}"
+                             FontSize="14" VerticalContentAlignment="Center">
+                    禁用
+                </RadioButton>
+            </Grid>
+        </TabItem>
+        <TabItem Header="存档替换与迁移" FontSize="11">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="14*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="13">
+                    迁移提示：盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
+                        <Run Foreground="BlueViolet" FontWeight="Bold">rep_persistentgamedataX.dat</Run>
+                    <LineBreak/>其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档栏位。
+                </TextBlock>
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="0" Name="OpenHackerDirectory" Click="OpenHackerDirectory_Click">
+                    打开盗版存档目录
+                </Button>
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="1" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
+                    打开正版存档目录
+                </Button>
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="2" Name="CopyNewFileName" Click="CopyNewFileName_Click">
+                    复制新文件名
+                </Button>
+
+            </Grid>
+        </TabItem>
+    </TabControl>
+    
 </Window>

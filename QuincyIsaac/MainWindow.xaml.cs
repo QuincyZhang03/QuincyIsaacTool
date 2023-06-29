@@ -1,29 +1,29 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
-using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace QuincyIsaac
 {
-    /// <summary>
-    /// MainWindow.xaml 的交互逻辑
-    /// </summary>
     public partial class MainWindow : Window
     {
         string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance\\options.ini";
         string original_content;
         bool initialized = false;
+        string steamID;
         public MainWindow()
         {
             InitializeComponent();
+            Left = (SystemParameters.WorkArea.Width - Width) / 2;
+            Top = (SystemParameters.WorkArea.Height - Height) / 2-100;
+
             if (!File.Exists(CONFIG_PATH))
             {
                 MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}游戏配置文件options.ini！\n" +
-                "可以通过QQ1391070463或在百度贴吧@炎炎夏日Quincy 联系我！",
+                "反馈BUG可以通过QQ1391070463或在百度贴吧@炎炎夏日Quincy 联系我！",
                 "运行失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }
@@ -141,6 +141,56 @@ namespace QuincyIsaac
             else
             {
                 MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CopyNewFileName_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText("rep_persistentgamedata1.dat");
+            MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
+                , MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void OpenHackerDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。", "准备查找"
+                , MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Diagnostics.Process.Start("explorer.exe", CONFIG_PATH.Substring(0, CONFIG_PATH.LastIndexOf("\\")));
+        }
+
+
+        private void OpenSteamVersionDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            string path = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Valve\\Steam", "InstallPath", null);
+            if (path != null)
+            {
+                path += "\\userdata";
+            }
+            bool success = false;
+
+            if (Directory.Exists(path))
+            {
+                SteamIDSelection selection = new SteamIDSelection(path, (id) => steamID = id);
+                if (selection.NeedToShow)
+                {
+                    selection.Owner = this;
+                    selection.ShowDialog();
+                }
+                success = selection.Result;
+            }
+            if (!success)
+            {
+                return;
+            }
+            path += $"\\{steamID}\\250900\\remote";
+            if (Directory.Exists(path))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", path);
+            }
+            else
+            {
+                MessageBox.Show($"抱歉，在SteamID{steamID}下未找到以撒文件夹。\n试图寻找的路径为：\n{path}",
+                    "未查找到目录", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
