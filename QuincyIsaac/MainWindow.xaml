@@ -91,7 +91,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="13">
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14">
                     迁移提示：盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
                         <Run Foreground="BlueViolet" FontWeight="Bold">rep_persistentgamedataX.dat</Run>
                     <LineBreak/>其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档栏位。
