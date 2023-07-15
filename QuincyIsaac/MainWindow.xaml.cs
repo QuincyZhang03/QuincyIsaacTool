@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -192,6 +193,11 @@ namespace QuincyIsaac
                 MessageBox.Show($"抱歉，在SteamID{steamID}下未找到以撒文件夹。\n试图寻找的路径为：\n{path}",
                     "未查找到目录", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void github_repo_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/QuincyZhang03/QuincyIsaacTool"));
         }
     }
 }

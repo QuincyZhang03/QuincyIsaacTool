@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="夏老师的以撒快捷开关 V2.0" Height="150" Width="350"
+        Title="夏老师的以撒快捷开关 V2.1" Height="150" Width="350"
         ResizeMode="CanMinimize"
         Icon="Resources\icon.ico">
     <Window.Resources>
@@ -26,7 +26,7 @@
         </Style>
     </Window.Resources>
     <TabControl Background="#FFECD8">
-        <TabItem Header="模组&amp;控制台" FontSize="11">
+        <TabItem Header="模组与控制台" FontSize="11">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -110,6 +110,16 @@
                 </Button>
 
             </Grid>
+        </TabItem>
+        <TabItem Header="更新与Bug反馈" FontSize="11">
+            <TextBlock FontSize="18" TextWrapping="WrapWithOverflow" VerticalAlignment="Center">
+                <Hyperlink Name="github_repo" Click="github_repo_Click">
+                    GitHub仓库 
+                </Hyperlink><LineBreak />
+                QQ：<Run Foreground="Blue" FontWeight="Bold">1391070463</Run><LineBreak />百度贴吧、Bilibili、Steam同ID：<LineBreak /> 
+                <Run Foreground="Purple" FontWeight="Bold">@炎炎夏日Quincy</Run> 
+                
+            </TextBlock>
         </TabItem>
     </TabControl>
     
