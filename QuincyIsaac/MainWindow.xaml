@@ -102,7 +102,7 @@
                     点击下方“打开正版存档目录”，在打开的文件夹中将胎衣+存档文件的前缀
                     <Run Foreground="BlueViolet" FontWeight="Bold">abp</Run>
                     修改为
-                    <Run Foreground="BlueViolet" FontWeight="Bold">abp</Run>
+                    <Run Foreground="BlueViolet" FontWeight="Bold">rep</Run>
                     即可。<LineBreak/>
                     <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">三、重生/胎衣存档移植到胎衣+/忏悔</Run> <LineBreak/>
                     关闭忏悔DLC，只勾选胎衣和胎衣+（关闭方法参看<Hyperlink Name="post_site" FontWeight="Bold" Click="post_site_Click">本帖第13楼</Hyperlink>）。然后启动游戏，进入游戏后在选择存档界面选择
