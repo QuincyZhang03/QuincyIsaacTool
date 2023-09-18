@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace QuincyIsaac
@@ -198,6 +199,31 @@ namespace QuincyIsaac
         private void github_repo_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/QuincyZhang03/QuincyIsaacTool"));
+        }
+
+        private void post_site_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405"));
+        }
+
+        private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            TabControl tabControl = sender as TabControl;
+            if (tabControl!= null)
+            {
+                TabItem item = tabControl.SelectedItem as TabItem;
+                if(item!=null)
+                {
+                    if (item.Name == "save_replace")
+                    {
+                        Height = 400;
+                    }
+                    else
+                    {
+                        Height = 150;
+                    }
+                }
+            }
         }
     }
 }

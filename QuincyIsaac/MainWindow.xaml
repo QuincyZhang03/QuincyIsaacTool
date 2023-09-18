@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="夏老师的以撒快捷开关 V2.1" Height="150" Width="350"
+        Title="夏老师的以撒快捷开关 V2.2" Height="150" Width="350"
         ResizeMode="CanMinimize"
         Icon="Resources\icon.ico">
     <Window.Resources>
@@ -25,7 +25,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <TabControl Background="#FFECD8">
+    <TabControl Background="#FFECD8" SelectionChanged="TabControl_SelectionChanged">
         <TabItem Header="模组与控制台" FontSize="11">
             <Grid>
                 <Grid.RowDefinitions>
@@ -41,14 +41,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" 
                    VerticalAlignment="Center" HorizontalAlignment="Left"
-                   FontSize="19" FontFamily="微软雅黑" FontWeight="Bold"
+                   FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
                    Name="l1">
                    是否启用模组
                 </TextBlock>
                 <TextBlock Grid.Row="1" Grid.Column="0"
                    VerticalAlignment="Center" HorizontalAlignment="Left"
-                   FontSize="19" FontFamily="微软雅黑" FontWeight="Bold"
+                   FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
                    Name="l2">
                    是否启用控制台
@@ -79,33 +79,46 @@
                 </RadioButton>
             </Grid>
         </TabItem>
-        <TabItem Header="存档替换与迁移" FontSize="11">
+        <TabItem Header="存档替换与迁移" FontSize="11" Name="save_replace">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="14*"/>
-                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="19*"/>
+                    <ColumnDefinition Width="23*" />
+                    <ColumnDefinition Width="23*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14">
-                    迁移提示：盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15.5" LineHeight="18">
+                    <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">一、盗版存档移植到正版</Run>
+                        <LineBreak />盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
                         <Run Foreground="BlueViolet" FontWeight="Bold">rep_persistentgamedataX.dat</Run>
-                    <LineBreak/>其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档栏位。
+                    <LineBreak/>
+                    其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档栏位。<LineBreak />
+                    <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">二、胎衣+存档移植到忏悔</Run> <LineBreak/>
+                    点击下方“打开正版存档目录”，在打开的文件夹中将胎衣+存档文件的前缀
+                    <Run Foreground="BlueViolet" FontWeight="Bold">abp</Run>
+                    修改为
+                    <Run Foreground="BlueViolet" FontWeight="Bold">abp</Run>
+                    即可。<LineBreak/>
+                    <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">三、重生/胎衣存档移植到胎衣+/忏悔</Run> <LineBreak/>
+                    关闭忏悔DLC，只勾选胎衣和胎衣+（关闭方法参看<Hyperlink Name="post_site" FontWeight="Bold" Click="post_site_Click">本帖第13楼</Hyperlink>）。然后启动游戏，进入游戏后在选择存档界面选择
+                        <Run Foreground="BlueViolet" FontWeight="Bold">“Import Rebirth”</Run>
+                        然后选择Yes，将重生/胎衣存档迁移到胎衣+，然后再参考本说明第二条将胎衣+存档迁移到忏悔。
                 </TextBlock>
-                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
-                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="0" Name="OpenHackerDirectory" Click="OpenHackerDirectory_Click">
+                <Button VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,0,6,0" Grid.Row="1" Grid.Column="0" Name="OpenHackerDirectory" Click="OpenHackerDirectory_Click" Grid.ColumnSpan="2">
                     打开盗版存档目录
                 </Button>
-                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
-                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="1" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
+                <Button VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,0,6,0" Grid.Row="1" Grid.Column="2" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
                     打开正版存档目录
                 </Button>
-                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="11" 
-                        Padding="4" Margin="6,1" Grid.Row="1" Grid.Column="2" Name="CopyNewFileName" Click="CopyNewFileName_Click">
+                <Button VerticalAlignment="Center" FontSize="11" 
+                        Padding="4" Margin="6,0,6,0" Grid.Row="1" Grid.Column="3" Name="CopyNewFileName" Click="CopyNewFileName_Click">
                     复制新文件名
                 </Button>
 
@@ -117,10 +130,10 @@
                     GitHub仓库 
                 </Hyperlink><LineBreak />
                 QQ：<Run Foreground="Blue" FontWeight="Bold">1391070463</Run><LineBreak />百度贴吧、Bilibili、Steam同ID：<LineBreak /> 
-                <Run Foreground="Purple" FontWeight="Bold">@炎炎夏日Quincy</Run> 
-                
+                <Run Foreground="Purple" FontWeight="Bold">@炎炎夏日Quincy</Run>
+
             </TextBlock>
         </TabItem>
     </TabControl>
-    
+
 </Window>
