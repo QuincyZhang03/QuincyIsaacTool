@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace QuincyIsaac
@@ -146,13 +147,6 @@ namespace QuincyIsaac
             }
         }
 
-        private void CopyNewFileName_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText("rep_persistentgamedata1.dat");
-            MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
-                , MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         private void OpenHackerDirectory_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。", "准备查找"
@@ -203,7 +197,7 @@ namespace QuincyIsaac
 
         private void post_site_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405"));
+            Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405?pid=148619573223#148619573223"));
         }
 
         private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -216,7 +210,7 @@ namespace QuincyIsaac
                 {
                     if (item.Name == "save_replace")
                     {
-                        Height = 400;
+                        Height = 500;
                     }
                     else
                     {
@@ -224,6 +218,31 @@ namespace QuincyIsaac
                     }
                 }
             }
+        }
+
+        private void file_name_text_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Run run)
+            {
+                run.TextDecorations = TextDecorations.Underline;
+                run.Foreground = Brushes.Red;
+            }
+        }
+
+        private void file_name_text_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Run run)
+            {
+                run.TextDecorations = null;
+                run.Foreground = Brushes.BlueViolet;
+            }
+        }
+
+        private void file_name_text_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Clipboard.SetText("rep_persistentgamedata1.dat");
+            MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
+                , MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
