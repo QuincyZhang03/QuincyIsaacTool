@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="夏老师的以撒快捷开关 V2.3" Height="150" Width="350"
+        Title="夏老师的以撒快捷开关 V2.4" Height="150" Width="350"
         ResizeMode="CanMinimize"
         Icon="Resources\icon.ico">
     <Window.Resources>
@@ -25,7 +25,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <TabControl Background="#FFECD8" SelectionChanged="TabControl_SelectionChanged">
+    <TabControl Background="#FFECD8" SelectionChanged="tab_root_SelectionChanged" Name="tab_root">
         <TabItem Header="模组与控制台" FontSize="11">
             <Grid>
                 <Grid.RowDefinitions>
@@ -43,14 +43,14 @@
                    VerticalAlignment="Center" HorizontalAlignment="Left"
                    FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
-                   Name="l1">
+                   Name="l_mod">
                    是否启用模组
                 </TextBlock>
                 <TextBlock Grid.Row="1" Grid.Column="0"
                    VerticalAlignment="Center" HorizontalAlignment="Left"
                    FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
                    Margin="15,0,0,0"
-                   Name="l2">
+                   Name="l_con">
                    是否启用控制台
                 </TextBlock>
                 <RadioButton Grid.Column="2"
@@ -79,18 +79,73 @@
                 </RadioButton>
             </Grid>
         </TabItem>
+        <TabItem Header="其他设置" FontSize="11" Name="other_settings">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition Height="5"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="135*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="72*"/>
+                    <ColumnDefinition Width="72*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" 
+           VerticalAlignment="Center" HorizontalAlignment="Left"
+           FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
+           Margin="15,0,0,0"
+           Name="l_mouse">
+           鼠标控制
+                </TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0"
+           VerticalAlignment="Center" HorizontalAlignment="Left"
+           FontSize="20" FontFamily="微软雅黑" FontWeight="Bold"
+           Margin="15,0,0,0"
+           Name="l_cloud">
+           Steam云存档
+                </TextBlock>
+                <RadioButton Grid.Column="2"
+             VerticalAlignment="Center" GroupName="mouse"
+             Name="mousey" Checked="mousey_Checked" Style="{StaticResource enabledStyle}" 
+                     FontSize="14" VerticalContentAlignment="Center">
+                    启用
+                </RadioButton>
+                <RadioButton Grid.Column="2"
+             VerticalAlignment="Center" GroupName="mouse"
+             Name="mousen" Checked="mousen_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}"
+                     FontSize="14" VerticalContentAlignment="Center">
+                    禁用
+                </RadioButton>
+                <RadioButton Grid.Row="1" Grid.Column="2"
+             VerticalAlignment="Center" GroupName="cloud"
+             Name="cloudy" Checked="cloudy_Checked" Style="{StaticResource enabledStyle}" 
+                     FontSize="14" VerticalContentAlignment="Center">
+                    启用
+                </RadioButton>
+                <RadioButton Grid.Row="1" Grid.Column="2"
+             VerticalAlignment="Center" GroupName="cloud"
+             Name="cloudn" Checked="cloudn_Checked" Grid.ColumnSpan="2" Margin="78,0,0,0" Style="{StaticResource disabledStyle}"
+                     FontSize="14" VerticalContentAlignment="Center">
+                    禁用
+                </RadioButton>
+            </Grid>
+        </TabItem>
+
         <TabItem Header="存档替换与迁移" FontSize="11" Name="save_replace">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="14*"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" LineHeight="20">
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" LineHeight="20">
                     <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">一、盗版存档移植到正版</Run>
                         <LineBreak />盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
                         <Run Foreground="BlueViolet" FontWeight="Bold" Name="file_name_text" MouseEnter="file_name_text_MouseEnter" MouseLeave="file_name_text_MouseLeave" Cursor="Hand" MouseLeftButtonDown="file_name_text_MouseLeftButtonDown">rep_persistentgamedataX.dat</Run>（点击文件名复制到剪切板）其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档位。<LineBreak />
@@ -101,7 +156,7 @@
                     <Run Foreground="BlueViolet" FontWeight="Bold">rep</Run>
                     即可。<LineBreak/>
                     <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">三、重生/胎衣存档移植到胎衣+/忏悔</Run> <LineBreak/>
-                    关闭忏悔DLC，只勾选胎衣和胎衣+（关闭方法参看<Hyperlink Name="post_site" FontWeight="Bold" Click="post_site_Click">本帖第13楼</Hyperlink>）。然后启动游戏，进入游戏后在选择存档界面选择
+                    关闭忏悔DLC，只勾选胎衣和胎衣+（关闭方法参看<Hyperlink Name="link_tieba2" FontWeight="Bold" Click="link_tieba2_Click">本帖第13楼</Hyperlink>）。然后启动游戏，进入游戏后在选择存档界面选择
                         <Run Foreground="BlueViolet" FontWeight="Bold">“Import Rebirth”</Run>
                         然后选择Yes，将重生/胎衣存档迁移到胎衣+，然后再参考本说明第二条将胎衣+存档迁移到忏悔。<LineBreak />
                     <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">四、替换全成就存档或他人存档</Run> <LineBreak/>
@@ -115,13 +170,20 @@
                         Padding="6" Margin="20,0" Grid.Row="1" Grid.Column="2" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
                     打开正版存档目录
                 </Button>
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" LineHeight="20" Foreground="DeepPink" Padding="0,0,0,7">
+                    注意：如果替换存档后发现无效，请切换到本程序<Hyperlink Foreground="Blue" FontWeight="Bold" TextDecorations="Underline" Cursor="Hand" Name="link_other_settings" Click="link_other_settings_Click">其他设置</Hyperlink>选项卡关闭<Bold>Steam云存档</Bold>。
+                </TextBlock>
             </Grid>
         </TabItem>
         <TabItem Header="更新与Bug反馈" FontSize="11">
             <TextBlock FontSize="18" TextWrapping="WrapWithOverflow" VerticalAlignment="Center">
-                <Hyperlink Name="github_repo" Click="github_repo_Click">
-                    GitHub仓库 
-                </Hyperlink><LineBreak />
+                 <Hyperlink Name="link_tieba" Click="link_tieba_Click" >
+                    贴吧原帖链接 
+                </Hyperlink>
+                <Run Text="    "/>
+                <Hyperlink Name="link_github_repo" Click="link_github_repo_Click">
+                    GitHub仓库
+                 </Hyperlink><LineBreak />
                 QQ：<Run Foreground="Blue" FontWeight="Bold">1391070463</Run><LineBreak />百度贴吧、Bilibili、Steam同ID：<LineBreak /> 
                 <Run Foreground="Purple" FontWeight="Bold">@炎炎夏日Quincy</Run>
 

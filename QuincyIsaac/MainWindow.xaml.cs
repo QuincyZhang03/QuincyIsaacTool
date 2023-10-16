@@ -21,7 +21,7 @@ namespace QuincyIsaac
         {
             InitializeComponent();
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
-            Top = (SystemParameters.WorkArea.Height - Height) / 2-100;
+            Top = (SystemParameters.WorkArea.Height - Height) / 2 - 100;
 
             if (!File.Exists(CONFIG_PATH))
             {
@@ -30,36 +30,19 @@ namespace QuincyIsaac
                 "运行失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }
-            original_content = GetConfigContent();
-            string modconfig = original_content.Substring(original_content.IndexOf("EnableMods=") + "EnableMods=".Length, 1);
-            if (modconfig == "1")
+
+            if (IsIsaacLaunched())
             {
-                mody.IsChecked = true;
-            }
-            else if (modconfig == "0")
-            {
-                modn.IsChecked = true;
-            }
-            else
-            {
-                MessageBox.Show("对不起，配置文件异常！", "文件异常", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
+                MessageBox.Show("检测到以撒的结合正在运行，为防止配置文件出错，请先关闭游戏后再使用本程序。", "游戏正在运行", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
-            string conconfig = original_content.Substring(original_content.IndexOf("EnableDebugConsole=") + "EnableDebugConsole=".Length, 1);
-            if (conconfig == "1")
-            {
-                cony.IsChecked = true;
-            }
-            else if (conconfig == "0")
-            {
-                conn.IsChecked = true;
-            }
-            else
-            {
-                MessageBox.Show("对不起，配置文件异常！", "文件异常", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
-            }
+            original_content = GetConfigContent();
+
+            LoadSetting("EnableMods", mody, modn);
+            LoadSetting("EnableDebugConsole", cony, conn);
+            LoadSetting("MouseControl", mousey, mousen);
+            LoadSetting("SteamCloud", cloudy, cloudn);
+
             initialized = true;
         }
 
@@ -78,73 +61,81 @@ namespace QuincyIsaac
             writer.Close();
             return newcontent;
         }
-        private void mody_Checked(object sender, RoutedEventArgs e)
+        private bool IsIsaacLaunched()
+        {
+            Process[] processes = Process.GetProcesses();
+            foreach (Process process in processes)
+            {
+                if (process.ProcessName == "isaac-ng")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void LoadSetting(string key, RadioButton callbackY, RadioButton callbackN)
+        {
+            string item_name = key + "=";
+            string value = original_content.Substring(original_content.IndexOf(item_name) + item_name.Length, 1);
+            if (value == "1")
+            {
+                callbackY.IsChecked = true;
+            }
+            else if (value == "0")
+            {
+                callbackN.IsChecked = true;
+            }
+            else
+            {
+                MessageBox.Show($"对不起，在读取{key}时配置文件异常！", "文件异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
+        }
+        private void ModifySetting(string key, bool enabled, TextBlock callback, string setting_name)
         {
             if (!initialized) return;
-            string newcontent = ExecuteContentReplacement("EnableMods=\\d", "EnableMods=1");
+            string value = enabled ? "1" : "0";
+            string newcontent = ExecuteContentReplacement($"{key}=\\d", $"{key}={value}");
             original_content = newcontent;
 
             if (original_content == GetConfigContent())
             {
-                l1.Text = "启用模组成功";
-                l1.Foreground = new SolidColorBrush(Color.FromRgb(0, 204, 102));
+                if (enabled)
+                {
+                    callback.Text = $"启用{setting_name}成功";
+                    callback.Foreground = new SolidColorBrush(Color.FromRgb(0, 204, 102));
+                }
+                else
+                {
+                    callback.Text = $"禁用{setting_name}成功";
+                    callback.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 255));
+                }
             }
             else
             {
                 MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void mody_Checked(object sender, RoutedEventArgs e)
+        {
+            ModifySetting("EnableMods", true, l_mod, "模组");
         }
 
         private void modn_Checked(object sender, RoutedEventArgs e)
         {
-            if (!initialized) return;
-            string newcontent = ExecuteContentReplacement("EnableMods=\\d", "EnableMods=0");
-            original_content = newcontent;
-
-            if (original_content == GetConfigContent())
-            {
-                l1.Text = "禁用模组成功";
-                l1.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 255));
-            }
-            else
-            {
-                MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            ModifySetting("EnableMods", false, l_mod, "模组");
         }
 
         private void cony_Checked(object sender, RoutedEventArgs e)
         {
-            if (!initialized) return;
-            string newcontent = ExecuteContentReplacement("EnableDebugConsole=\\d", "EnableDebugConsole=1");
-            original_content = newcontent;
-
-            if (original_content == GetConfigContent())
-            {
-                l2.Text = "启用控制台成功";
-                l2.Foreground = new SolidColorBrush(Color.FromRgb(0, 204, 102));
-            }
-            else
-            {
-                MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            ModifySetting("EnableDebugConsole", true, l_con, "控制台");
         }
 
         private void conn_Checked(object sender, RoutedEventArgs e)
         {
-
-            if (!initialized) return;
-            string newcontent = ExecuteContentReplacement("EnableDebugConsole=\\d", "EnableDebugConsole=0");
-            original_content = newcontent;
-
-            if (original_content == GetConfigContent())
-            {
-                l2.Text = "禁用控制台成功";
-                l2.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 255));
-            }
-            else
-            {
-                MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            ModifySetting("EnableDebugConsole", false, l_con, "控制台");
         }
 
         private void OpenHackerDirectory_Click(object sender, RoutedEventArgs e)
@@ -190,27 +181,27 @@ namespace QuincyIsaac
             }
         }
 
-        private void github_repo_Click(object sender, RoutedEventArgs e)
+        private void link_github_repo_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/QuincyZhang03/QuincyIsaacTool"));
         }
 
-        private void post_site_Click(object sender, RoutedEventArgs e)
+        private void link_tieba2_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405?pid=148619573223#148619573223"));
         }
 
-        private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void tab_root_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             TabControl tabControl = sender as TabControl;
-            if (tabControl!= null)
+            if (tabControl != null)
             {
                 TabItem item = tabControl.SelectedItem as TabItem;
-                if(item!=null)
+                if (item != null)
                 {
                     if (item.Name == "save_replace")
                     {
-                        Height = 500;
+                        Height = 530;
                     }
                     else
                     {
@@ -243,6 +234,36 @@ namespace QuincyIsaac
             Clipboard.SetText("rep_persistentgamedata1.dat");
             MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
                 , MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void mousey_Checked(object sender, RoutedEventArgs e)
+        {
+            ModifySetting("MouseControl", true, l_mouse, "鼠标");
+        }
+
+        private void mousen_Checked(object sender, RoutedEventArgs e)
+        {
+            ModifySetting("MouseControl", false, l_mouse, "鼠标");
+        }
+
+        private void cloudy_Checked(object sender, RoutedEventArgs e)
+        {
+            ModifySetting("SteamCloud", true, l_cloud, "云存档");
+        }
+
+        private void cloudn_Checked(object sender, RoutedEventArgs e)
+        {
+            ModifySetting("SteamCloud", false, l_cloud, "云存档");
+        }
+
+        private void link_other_settings_Click(object sender, RoutedEventArgs e)
+        {
+            tab_root.SelectedItem=other_settings;
+        }
+
+        private void link_tieba_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405"));
         }
     }
 }
