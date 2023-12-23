@@ -201,7 +201,7 @@ namespace QuincyIsaac
                 {
                     if (item.Name == "save_replace")
                     {
-                        Height = 530;
+                        Height = 520;
                     }
                     else
                     {
@@ -256,14 +256,30 @@ namespace QuincyIsaac
             ModifySetting("SteamCloud", false, l_cloud, "云存档");
         }
 
-        private void link_other_settings_Click(object sender, RoutedEventArgs e)
+        private void link_demonstration_Click(object sender, RoutedEventArgs e)
         {
-            tab_root.SelectedItem=other_settings;
+            Process.Start(new ProcessStartInfo("https://www.bilibili.com/video/BV1nQ4y1u7sM/"));
         }
 
         private void link_tieba_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405"));
+        }
+
+        private void link_demonstration_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink)
+            {
+                hyperlink.Foreground = Brushes.Red;
+            }
+        }
+
+        private void link_demonstration_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink)
+            {
+                hyperlink.Foreground = Brushes.Blue;
+            }
         }
     }
 }

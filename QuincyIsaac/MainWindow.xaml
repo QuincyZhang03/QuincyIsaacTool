@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="夏老师的以撒快捷开关 V2.4" Height="150" Width="350"
+        Title="夏老师的以撒快捷开关 V2.5" Height="150" Width="350"
         ResizeMode="CanMinimize"
         Icon="Resources\icon.ico">
     <Window.Resources>
@@ -53,10 +53,10 @@
                    Name="l_con">
                    是否启用控制台
                 </TextBlock>
-                <RadioButton Grid.Column="2"
+                <RadioButton Grid.Column="1"
                      VerticalAlignment="Center" GroupName="mod"
                      Name="mody" Checked="mody_Checked" Style="{StaticResource enabledStyle}" 
-                             FontSize="14" VerticalContentAlignment="Center">
+                             FontSize="14" VerticalContentAlignment="Center" Grid.ColumnSpan="2" Margin="23,0,0,0">
                     启用
                 </RadioButton>
                 <RadioButton Grid.Column="2"
@@ -65,10 +65,10 @@
                              FontSize="14" VerticalContentAlignment="Center">
                     禁用
                 </RadioButton>
-                <RadioButton Grid.Row="1" Grid.Column="2"
+                <RadioButton Grid.Row="1" Grid.Column="1"
                      VerticalAlignment="Center" GroupName="console"
                      Name="cony" Checked="cony_Checked" Style="{StaticResource enabledStyle}" 
-                             FontSize="14" VerticalContentAlignment="Center">
+                             FontSize="14" VerticalContentAlignment="Center" Grid.ColumnSpan="2" Margin="23,0,0,0">
                     启用
                 </RadioButton>
                 <RadioButton Grid.Row="1" Grid.Column="2"
@@ -136,16 +136,17 @@
         <TabItem Header="存档替换与迁移" FontSize="11" Name="save_replace">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="11*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="17*" />
+                    <ColumnDefinition Width="69*"/>
+                    <ColumnDefinition Width="86*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" LineHeight="20">
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" LineHeight="20" Grid.RowSpan="3">
                     <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">一、盗版存档移植到正版</Run>
                         <LineBreak />盗版存档文件名一般带有日期。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
                         <Run Foreground="BlueViolet" FontWeight="Bold" Name="file_name_text" MouseEnter="file_name_text_MouseEnter" MouseLeave="file_name_text_MouseLeave" Cursor="Hand" MouseLeftButtonDown="file_name_text_MouseLeftButtonDown">rep_persistentgamedataX.dat</Run>（点击文件名复制到剪切板）其中<Bold><Underline>X为1,2或3</Underline></Bold>，对应三个存档位。<LineBreak />
@@ -163,15 +164,15 @@
                     参考本说明第一条修改文件名进行替换即可。重生无前缀，胎衣前缀为ab_，胎衣+前缀为abp_，忏悔前缀为rep_。
                 </TextBlock>
                 <Button VerticalAlignment="Center" FontSize="13" 
-                        Padding="6" Margin="20,0" Grid.Row="1" Grid.Column="0" Name="OpenHackerDirectory" Click="OpenHackerDirectory_Click" >
+                        Padding="6" Margin="20,0,20,0" Grid.Row="1" Grid.Column="0" Name="OpenHackerDirectory" Click="OpenHackerDirectory_Click" Grid.ColumnSpan="2" >
                     打开盗版存档目录
                 </Button>
                 <Button VerticalAlignment="Center" FontSize="13" FontWeight="Bold" Foreground="Green"
-                        Padding="6" Margin="20,0" Grid.Row="1" Grid.Column="2" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
+                        Padding="6" Margin="20,0,20,0" Grid.Row="1" Grid.Column="2" Name="OpenSteamVersionDirectory" Click="OpenSteamVersionDirectory_Click">
                     打开正版存档目录
                 </Button>
-                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16" LineHeight="20" Foreground="DeepPink" Padding="0,0,0,7">
-                    注意：如果替换存档后发现无效，请切换到本程序<Hyperlink Foreground="Blue" FontWeight="Bold" TextDecorations="Underline" Cursor="Hand" Name="link_other_settings" Click="link_other_settings_Click">其他设置</Hyperlink>选项卡关闭<Bold>Steam云存档</Bold>。
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" FontSize="16" LineHeight="20" Foreground="DeepPink" Padding="0,0,0,7">
+                    存档迁移视频演示：<Hyperlink Foreground="Blue" FontWeight="Bold" TextDecorations="Underline" Cursor="Hand" Name="link_demonstration" Click="link_demonstration_Click" MouseEnter="link_demonstration_MouseEnter" MouseLeave="link_demonstration_MouseLeave">Bilibili观看</Hyperlink>
                 </TextBlock>
             </Grid>
         </TabItem>
