@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -7,13 +9,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
     {
-        string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
+        readonly string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance\\options.ini";
+        const int NORMAL_HEIGHT = 150;
+        const int EXPANDED_HEIGHT = 350;
+
         string original_content;
         bool initialized = false;
         string steamID;
@@ -25,7 +31,8 @@ namespace QuincyIsaac
 
             if (!File.Exists(CONFIG_PATH))
             {
-                MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}游戏配置文件options.ini！\n" +
+                MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}下找到游戏配置文件options.ini！\n" +
+                "注意：本工具仅适用于忏悔，如果尚未运行过忏悔版本，请至少运行一次后再使用本工具。\n"+
                 "反馈BUG可以通过QQ1391070463或在百度贴吧@炎炎夏日Quincy 联系我！",
                 "运行失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
@@ -138,9 +145,9 @@ namespace QuincyIsaac
             ModifySetting("EnableDebugConsole", false, l_con, "控制台");
         }
 
-        private void OpenHackerDirectory_Click(object sender, RoutedEventArgs e)
+        private void OpenBackupDirectory_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。", "准备查找"
+            MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。\n\n注意：如果要把存档迁移到盗版游戏里，请不要试图覆盖此处的任何文件，而应该尝试使用“迁移到盗版”选项卡中的功能。", "准备查找"
                 , MessageBoxButton.OK, MessageBoxImage.Information);
             System.Diagnostics.Process.Start("explorer.exe", CONFIG_PATH.Substring(0, CONFIG_PATH.LastIndexOf("\\")));
         }
@@ -172,7 +179,7 @@ namespace QuincyIsaac
             path += $"\\{steamID}\\250900\\remote";
             if (Directory.Exists(path))
             {
-                System.Diagnostics.Process.Start("explorer.exe", path);
+                Process.Start("explorer.exe", path);
             }
             else
             {
@@ -201,11 +208,11 @@ namespace QuincyIsaac
                 {
                     if (item.Name == "save_replace")
                     {
-                        Height = 520;
+                        Height = EXPANDED_HEIGHT;
                     }
                     else
                     {
-                        Height = 150;
+                        Height = NORMAL_HEIGHT;
                     }
                 }
             }
@@ -280,6 +287,77 @@ namespace QuincyIsaac
             {
                 hyperlink.Foreground = Brushes.Blue;
             }
+        }
+
+        private void scroll_save_replace_text_Loaded(object sender, RoutedEventArgs e)
+        {
+            ScrollViewer viewer = sender as ScrollViewer;
+            if (viewer != null)
+            {
+                viewer.ScrollToTop();
+            }
+        }
+
+        private void SearchLoadedHackerSave_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            if (button != null)
+            {
+                LoadedHackerSavePos codex = new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote");
+                LoadedHackerSavePos goldberg = new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote");
+
+                LoadedHackerSavePos[] datalist = { codex, goldberg };
+                list_LoadedHackerSave.ItemsSource = datalist;
+                int num_found = 0;
+                foreach(LoadedHackerSavePos poses in datalist)
+                {
+                    if (poses.Exists)
+                    {
+                        num_found++;
+                    }
+                }
+                button.IsEnabled = false;
+                if (num_found == 0)
+                {
+                    button.Content = "无结果";
+                }
+                else
+                {
+                    button.Content = $"找到{num_found}个";
+                }
+            }
+        }
+
+        private void VisitLoadedHackerSave_Click(object sender, RoutedEventArgs e)
+        {
+            Button button=sender as Button;
+            if (button == null)
+            {
+                return;
+            }
+            LoadedHackerSavePos savepos=button.DataContext as LoadedHackerSavePos;
+            if (savepos != null)
+            {
+                Process.Start("explorer.exe", savepos.Path);
+            }
+        }
+    }
+    public class LoadedHackerSavePos
+    {
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public bool Exists { 
+            get { 
+                return Directory.Exists(Path);
+            } 
+        }
+        public string Result { get {
+                return Exists ? "找到存档" : "无";
+            } }
+        public LoadedHackerSavePos(string name, string path)
+        {
+            Name = name;
+            Path = path;
         }
     }
 }
