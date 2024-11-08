@@ -65,5 +65,10 @@ namespace QuincyIsaac
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void HowToFindID_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("点击Steam主界面左上角的Steam→设置，在打开的界面就可以看到\"好友代码\"一栏。","如何查看好友码");
+        }
     }
 }

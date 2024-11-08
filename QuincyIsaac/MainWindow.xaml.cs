@@ -1,7 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -9,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace QuincyIsaac
 {
@@ -32,7 +29,7 @@ namespace QuincyIsaac
             if (!File.Exists(CONFIG_PATH))
             {
                 MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}下找到游戏配置文件options.ini！\n" +
-                "注意：本工具仅适用于忏悔，如果尚未运行过忏悔版本，请至少运行一次后再使用本工具。\n"+
+                "注意：本工具仅适用于忏悔。如果尚未运行过忏悔版本，请至少运行一次后再使用本工具。\n" +
                 "反馈BUG可以通过QQ1391070463或在百度贴吧@炎炎夏日Quincy 联系我！",
                 "运行失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
@@ -183,7 +180,7 @@ namespace QuincyIsaac
             }
             else
             {
-                MessageBox.Show($"抱歉，在SteamID{steamID}下未找到以撒文件夹。\n试图寻找的路径为：\n{path}",
+                MessageBox.Show($"抱歉，在SteamID{steamID}下未找到以撒文件夹。\n试图寻找的路径为：\n{path}\n注意：如果您刚购买游戏/DLC还从未运行过，请至少运行一次。",
                     "未查找到目录", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -309,7 +306,7 @@ namespace QuincyIsaac
                 LoadedHackerSavePos[] datalist = { codex, goldberg };
                 list_LoadedHackerSave.ItemsSource = datalist;
                 int num_found = 0;
-                foreach(LoadedHackerSavePos poses in datalist)
+                foreach (LoadedHackerSavePos poses in datalist)
                 {
                     if (poses.Exists)
                     {
@@ -330,30 +327,41 @@ namespace QuincyIsaac
 
         private void VisitLoadedHackerSave_Click(object sender, RoutedEventArgs e)
         {
-            Button button=sender as Button;
+            Button button = sender as Button;
             if (button == null)
             {
                 return;
             }
-            LoadedHackerSavePos savepos=button.DataContext as LoadedHackerSavePos;
+            LoadedHackerSavePos savepos = button.DataContext as LoadedHackerSavePos;
             if (savepos != null)
             {
                 Process.Start("explorer.exe", savepos.Path);
             }
+        }
+
+        private void OtherSettingsLink_Click(object sender, RoutedEventArgs e)
+        {
+            tab_root.SelectedItem = other_settings;
         }
     }
     public class LoadedHackerSavePos
     {
         public string Name { get; set; }
         public string Path { get; set; }
-        public bool Exists { 
-            get { 
+        public bool Exists
+        {
+            get
+            {
                 return Directory.Exists(Path);
-            } 
+            }
         }
-        public string Result { get {
+        public string Result
+        {
+            get
+            {
                 return Exists ? "找到存档" : "无";
-            } }
+            }
+        }
         public LoadedHackerSavePos(string name, string path)
         {
             Name = name;

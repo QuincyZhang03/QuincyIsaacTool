@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Title="夏老师的以撒快捷开关 V2.6" Height="150" Width="350" ResizeMode="CanMinimize" Icon="Resources\icon.ico">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Title="夏老师的以撒快捷开关 V2.6.1" Height="150" Width="350" ResizeMode="CanMinimize" Icon="Resources\icon.ico">
     <Window.Resources>
         <Style x:Key="enabledStyle">
             <Style.Triggers>
@@ -228,16 +228,37 @@
                         </ListView>
                     </StackPanel>
                 </TabItem>
+                <TabItem Header="常见问题与失败排查">
+                    <ScrollViewer>
+                        <TextBlock FontSize="15" TextWrapping="Wrap" LineHeight="23">
+                            <Run FontWeight="Bold" FontSize="17">迁移完成后的常见问题：</Run>
+                            <LineBreak/>
+                            <Run Foreground="DarkBlue">Q:迁移成功后可以开启云存档吗？</Run><LineBreak/>
+                            <Run Foreground="Green">A:迁移后稍微打一点进度，然后就可以开启云存档了。</Run><LineBreak/>
+                            <Run Foreground="DarkBlue">Q:迁移成功后，可以把成就同步到Steam里吗？</Run><LineBreak/>
+                            <Run Foreground="Green">A:可以。进入游戏后选择存档，在主菜单选择统计数据→成就，Steam成就就会弹出来了。</Run><LineBreak/>
+                            <LineBreak/>
+                            <Run FontWeight="Bold" FontSize="17">如果存档迁移失败，请逐个排查以下可能导致错误的问题：</Run>
+                            <LineBreak/>
+                            1.没有<Run Foreground="Red">关闭</Run>Steam中以撒的云同步。<LineBreak/>
+                            2.没有<Run Foreground="Red">启用</Run>本工具<Hyperlink Name="OtherSettingsLink" Foreground="Blue" FontWeight="Bold" Click="OtherSettingsLink_Click">其他设置</Hyperlink>选项卡中的Steam云存档。<LineBreak/>
+                            3.打开正版存档目录时，选择的好友码有误。（如未提示选择好友码，可忽略此项）<LineBreak/>
+                            4.在隐藏扩展名的情况下仍然加了.dat后缀。<LineBreak/>
+                            如确认以上操作均无误后依然失败，可以尝试联系我协助解决哦~
+                        </TextBlock>
+                    </ScrollViewer>
+                    
+                </TabItem>
             </TabControl>
         </TabItem>
-        <TabItem Header="更新与Bug反馈" FontSize="11">
+        <TabItem Header="联系我" FontSize="11">
             <TextBlock FontSize="18" TextWrapping="WrapWithOverflow" VerticalAlignment="Center">
             <Hyperlink Name="link_tieba" Click="link_tieba_Click">
                     贴吧原帖链接
             </Hyperlink>
             <Run Text="    " />
             <Hyperlink Name="link_github_repo" Click="link_github_repo_Click">
-                    GitHub仓库
+                    Github仓库
             </Hyperlink>
             <LineBreak />
  QQ：<Run Foreground="Blue" FontWeight="Bold">1391070463</Run>

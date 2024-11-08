@@ -11,19 +11,20 @@
         >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="137*"/>
-            <ColumnDefinition Width="153*"/>
+            <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="17" FontWeight="Bold"
-                   Grid.ColumnSpan="2" Margin="15,0,0,0" >
-            请选择您的SteamID（好友码）：</TextBlock>
-        <ComboBox Grid.Row="1" Margin="70,10,70,10" IsReadOnly="True" Name="SteamIDComboBox" Grid.ColumnSpan="2" SelectedIndex="0"></ComboBox>
-        <Button Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="20,3" FontSize="12" Name="IDConfirm" 
-                Click="IDConfirm_Click" Grid.ColumnSpan="2" Margin="112,0,0,0">确定</Button>
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="17" FontWeight="Bold" Grid.ColumnSpan="2">
+            请选择您的Steam好友码：</TextBlock>
+        <ComboBox Grid.Row="1" Margin="70,10,70,10" IsReadOnly="True" Name="SteamIDComboBox" SelectedIndex="0" Grid.ColumnSpan="2"></ComboBox>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20,3" FontSize="12" Name="HowToFindID" Grid.Row="2" Grid.Column="0"
+Click="HowToFindID_Click" >帮助</Button>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20,3" FontSize="12" Name="IDConfirm" Grid.Row="2" Grid.Column="1" FontWeight="Bold"
+        Click="IDConfirm_Click" >确定</Button>
     </Grid>
 </Window>
