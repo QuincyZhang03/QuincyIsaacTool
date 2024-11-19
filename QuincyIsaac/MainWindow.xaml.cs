@@ -14,10 +14,18 @@ namespace QuincyIsaac
     {
         readonly string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance\\options.ini";
-        const int NORMAL_HEIGHT = 150;
+
+        readonly string CONFIG_PATH_PLUS = Environment.GetEnvironmentVariable("USERPROFILE")
+            + "\\Documents\\My Games\\Binding of Isaac Repentance+\\options.ini";
+
+        const int NORMAL_HEIGHT = 170;
         const int EXPANDED_HEIGHT = 350;
 
+        string active_option;
         string original_content;
+
+        readonly bool rep_exists;
+        readonly bool plus_exists;
         bool initialized = false;
         string steamID;
         public MainWindow()
@@ -26,33 +34,63 @@ namespace QuincyIsaac
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
             Top = (SystemParameters.WorkArea.Height - Height) / 2 - 100;
 
-            if (!File.Exists(CONFIG_PATH))
+            rep_exists = File.Exists(CONFIG_PATH);
+            plus_exists = File.Exists(CONFIG_PATH_PLUS);
+            if (!rep_exists && !plus_exists)
             {
-                MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}下找到游戏配置文件options.ini！\n" +
-                "注意：本工具仅适用于忏悔。如果尚未运行过忏悔版本，请至少运行一次后再使用本工具。\n" +
+                MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}或{CONFIG_PATH_PLUS}下找到游戏配置文件options.ini！\n" +
+                "注意：本工具仅适用于忏悔或忏悔+。如果尚未运行过忏悔或忏悔+，请至少运行一次后再使用本工具。\n" +
                 "反馈BUG可以通过QQ1391070463或在百度贴吧@炎炎夏日Quincy 联系我！",
                 "运行失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
+            }
+            else
+            {
+                ver_rep.IsEnabled = rep_exists;
+                ver_plus.IsEnabled = plus_exists;
+                if (rep_exists)
+                {
+                    ver_rep.IsChecked = true;
+                    active_option= CONFIG_PATH;
+                }
+                else
+                {
+                    ver_plus.IsChecked = true;
+                    active_option= CONFIG_PATH_PLUS;
+                }
             }
 
             if (IsIsaacLaunched())
             {
                 MessageBox.Show("检测到以撒的结合正在运行，为防止配置文件出错，请先关闭游戏后再使用本程序。", "游戏正在运行", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            ReloadSettings();
+        }
 
+        private void ReloadSettings()
+        {
+            initialized = false;
             original_content = GetConfigContent();
-
             LoadSetting("EnableMods", mody, modn);
             LoadSetting("EnableDebugConsole", cony, conn);
             LoadSetting("MouseControl", mousey, mousen);
             LoadSetting("SteamCloud", cloudy, cloudn);
+
+            l_mod.Text = "是否启用模组";
+            l_mod.Foreground = Brushes.Black;
+            l_con.Text = "是否启用控制台";
+            l_con.Foreground = Brushes.Black;
+            l_mouse.Text = "鼠标控制";
+            l_mouse.Foreground = Brushes.Black;
+            l_cloud.Text = "Steam云存档";
+            l_cloud.Foreground = Brushes.Black;
 
             initialized = true;
         }
 
         private string GetConfigContent()
         {
-            StreamReader reader = new StreamReader(CONFIG_PATH);
+            StreamReader reader = new StreamReader(active_option);
             string config = reader.ReadToEnd();
             reader.Close();
             return config;
@@ -60,7 +98,7 @@ namespace QuincyIsaac
         private string ExecuteContentReplacement(string original_key, string replacement)
         {
             string newcontent = Regex.Replace(original_content, original_key, replacement);
-            StreamWriter writer = new StreamWriter(CONFIG_PATH, false);
+            StreamWriter writer = new StreamWriter(active_option, false);
             writer.Write(newcontent);
             writer.Close();
             return newcontent;
@@ -103,7 +141,7 @@ namespace QuincyIsaac
             string newcontent = ExecuteContentReplacement($"{key}=\\d", $"{key}={value}");
             original_content = newcontent;
 
-            if (original_content == GetConfigContent())
+            if (original_content == GetConfigContent()) //校验
             {
                 if (enabled)
                 {
@@ -146,7 +184,7 @@ namespace QuincyIsaac
         {
             MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。\n\n注意：如果要把存档迁移到盗版游戏里，请不要试图覆盖此处的任何文件，而应该尝试使用“迁移到盗版”选项卡中的功能。", "准备查找"
                 , MessageBoxButton.OK, MessageBoxImage.Information);
-            System.Diagnostics.Process.Start("explorer.exe", CONFIG_PATH.Substring(0, CONFIG_PATH.LastIndexOf("\\")));
+            Process.Start("explorer.exe", active_option.Substring(0, active_option.LastIndexOf("\\")));
         }
 
 
@@ -195,7 +233,7 @@ namespace QuincyIsaac
             Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405?pid=148619573223#148619573223"));
         }
 
-        private void tab_root_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void tab_root_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TabControl tabControl = sender as TabControl;
             if (tabControl != null)
@@ -342,6 +380,18 @@ namespace QuincyIsaac
         private void OtherSettingsLink_Click(object sender, RoutedEventArgs e)
         {
             tab_root.SelectedItem = other_settings;
+        }
+
+        private void ver_rep_Checked(object sender, RoutedEventArgs e)
+        {
+            active_option = CONFIG_PATH;
+            ReloadSettings();
+        }
+
+        private void ver_plus_Checked(object sender, RoutedEventArgs e)
+        {
+            active_option = CONFIG_PATH_PLUS;
+            ReloadSettings();
         }
     }
     public class LoadedHackerSavePos
