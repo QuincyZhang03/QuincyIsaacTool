@@ -2,7 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -12,6 +16,11 @@ namespace QuincyIsaac
 {
     public partial class MainWindow : Window
     {
+        const string UPDATE_CHECK_WEBSITE = "https://gitee.com/quincyzhang/quincy-isaac-tool-ver/blob/master/version.txt";
+        readonly int MAJOR_VERSION;
+        readonly int MINOR_VERSION;
+        readonly int AMEND_VERSION;
+
         readonly string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance\\options.ini";
 
@@ -30,9 +39,16 @@ namespace QuincyIsaac
         string steamID;
         public MainWindow()
         {
+            string[] VERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion.Split('.');
+            MAJOR_VERSION = int.Parse(VERSION[0]);
+            MINOR_VERSION = int.Parse(VERSION[1]);
+            AMEND_VERSION = int.Parse(VERSION[2]);
             InitializeComponent();
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
             Top = (SystemParameters.WorkArea.Height - Height) / 2 - 100;
+
+            string displayed_amend_version = AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION;
+            Title = $"夏老师的以撒快捷开关 V{MAJOR_VERSION}.{MINOR_VERSION}{displayed_amend_version}";
 
             rep_exists = File.Exists(CONFIG_PATH);
             plus_exists = File.Exists(CONFIG_PATH_PLUS);
@@ -51,12 +67,12 @@ namespace QuincyIsaac
                 if (rep_exists)
                 {
                     ver_rep.IsChecked = true;
-                    active_option= CONFIG_PATH;
+                    active_option = CONFIG_PATH;
                 }
                 else
                 {
                     ver_plus.IsChecked = true;
-                    active_option= CONFIG_PATH_PLUS;
+                    active_option = CONFIG_PATH_PLUS;
                 }
             }
 
@@ -86,6 +102,78 @@ namespace QuincyIsaac
             l_cloud.Foreground = Brushes.Black;
 
             initialized = true;
+        }
+
+        private void Update()
+        {
+            try
+            {
+                TimedWebClient webClient = new TimedWebClient();
+                byte[] data = webClient.DownloadData(UPDATE_CHECK_WEBSITE);
+                string content = Encoding.UTF8.GetString(data).Replace("&lt;", "<").Replace("&gt;", ">");
+                int majorVer = int.Parse(GetMidString(content, "<主版本>", "</主版本>"));
+                int minorVer = int.Parse(GetMidString(content, "<子版本>", "</子版本>"));
+                int amendVer = int.Parse(GetMidString(content, "<修正版本>", "</修正版本>"));
+                string notice = GetMidString(content, "<公告>", "</公告>").Replace("<lb>", "\n");
+                //访问网络资源的行为不能放在UI线程里
+                tab_update.Dispatcher.Invoke(new Action(() =>
+                {
+                    p_update_all_content.Visibility = Visibility.Visible;
+                    if (HasNewerVersion(majorVer, minorVer, amendVer))
+                    {
+                        tab_update.Background = Brushes.YellowGreen;
+                        l_version_title.Text = "发现新版本:";
+
+                        string displayed_new_amend_version = amendVer == 0 ? "" : "." + amendVer;
+                        l_latest_version.Text = $"V{majorVer}.{minorVer}{displayed_new_amend_version}";
+
+                    }
+                    else
+                    {
+                        p_new_version_info.Visibility = Visibility.Collapsed;
+                    }
+                    l_notice.Text = notice;
+                }));
+            }
+            catch
+            {
+                tab_update.Dispatcher.Invoke((Action)(() =>
+                {
+                    tab_update.IsEnabled = false;
+
+                }));
+            }
+
+        }
+        private bool HasNewerVersion(int majorVer, int minorVer, int amendVer)
+        {
+            if (majorVer > MAJOR_VERSION)
+            {
+                return true;
+            }
+            if (majorVer == MAJOR_VERSION && minorVer > MINOR_VERSION)
+            {
+                return true;
+            }
+            if (majorVer == MAJOR_VERSION && minorVer == MINOR_VERSION && amendVer > AMEND_VERSION)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private string GetMidString(string source, string pref, string suff)
+        {
+            int prefindex = source.IndexOf(pref);
+            int suffindex = source.IndexOf(suff);
+            Console.WriteLine(prefindex + " " + suffindex);
+            if (prefindex == -1 || suffindex == -1 || prefindex >= suffindex)
+            {
+                Console.WriteLine(source);
+                return null;
+            }
+            int startindex = prefindex + pref.Length;
+            return source.Substring(startindex, suffindex - startindex);
         }
 
         private string GetConfigContent()
@@ -324,15 +412,6 @@ namespace QuincyIsaac
             }
         }
 
-        private void scroll_save_replace_text_Loaded(object sender, RoutedEventArgs e)
-        {
-            ScrollViewer viewer = sender as ScrollViewer;
-            if (viewer != null)
-            {
-                viewer.ScrollToTop();
-            }
-        }
-
         private void SearchLoadedHackerSave_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -385,13 +464,26 @@ namespace QuincyIsaac
         private void ver_rep_Checked(object sender, RoutedEventArgs e)
         {
             active_option = CONFIG_PATH;
+            OpenBackupDirectory.Content = "备份存档目录(忏悔)";
             ReloadSettings();
         }
 
         private void ver_plus_Checked(object sender, RoutedEventArgs e)
         {
             active_option = CONFIG_PATH_PLUS;
+            OpenBackupDirectory.Content = "备份存档目录(忏悔+)";
             ReloadSettings();
+        }
+
+        private void link_download_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://quincyzhang.lanzoul.com/b04k53rkf"));
+        }
+
+        private void tab_update_Loaded(object sender, RoutedEventArgs e)
+        {
+            p_update_all_content.Visibility = Visibility.Hidden;
+            new Thread(Update).Start();
         }
     }
     public class LoadedHackerSavePos
@@ -416,6 +508,16 @@ namespace QuincyIsaac
         {
             Name = name;
             Path = path;
+        }
+    }
+
+    class TimedWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            var request = base.GetWebRequest(address);
+            request.Timeout = 5000; //获取更新等待超时5秒
+            return request;
         }
     }
 }
