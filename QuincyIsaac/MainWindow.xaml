@@ -126,7 +126,7 @@
                                 <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">
                                 一、盗版存档迁移到正版</Run>
                                 <LineBreak />
-                                <Run Foreground="MediumPurple" FontWeight="Bold">重要：盗版入正迁移之前，请先运行一次盗版！</Run><LineBreak />
+                                <Run Foreground="MediumPurple" FontWeight="Bold">重要：盗版入正迁移之前，建议先运行一次盗版，并在要迁移的存档中新开一局游戏，然后退出，再进行以下操作。</Run><LineBreak />
                                 盗版存档文件名一般带有日期，可以点击下方“打开备份存档目录”进行查看。如要迁移到正版，请将其找到并拷贝到正版目录中，然后将复制好的存档文件重命名为
                                 <Run Foreground="BlueViolet" FontWeight="Bold" Name="file_name_text" MouseEnter="file_name_text_MouseEnter" MouseLeave="file_name_text_MouseLeave" Cursor="Hand" MouseLeftButtonDown="file_name_text_MouseLeftButtonDown">
                                 rep_persistentgamedataX.dat</Run>（点击文件名复制到剪切板）其中                                <Bold>
@@ -145,7 +145,15 @@
                             <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">
                                 四、替换全成就存档或他人存档</Run>
                             <LineBreak />
-                                参考本说明第一条修改文件名进行替换即可。重生无前缀，胎衣前缀为ab_，胎衣+前缀为abp_，忏悔前缀为rep_。</TextBlock>
+                                参考本说明第一条修改文件名进行替换即可。重生无前缀，胎衣前缀为ab_，胎衣+前缀为abp_，忏悔前缀为rep_，忏悔+前缀为rep+。
+                            <LineBreak />
+                            <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">
+                                五、关于忏悔+</Run>
+                            <LineBreak />
+                                如果要把存档迁移到忏悔+，只需迁移到忏悔即可。启动忏悔+时，游戏会自动将忏悔存档导入到忏悔+。
+                            </TextBlock>
+                            
+                                
                             </ScrollViewer>
 
                             <Button VerticalAlignment="Center" FontSize="13" Padding="6" Margin="20,10,10,0" Grid.Row="1" Grid.Column="0" Name="OpenBackupDirectory" Click="OpenBackupDirectory_Click" Grid.ColumnSpan="2">
@@ -256,7 +264,9 @@
                             <Run Foreground="Green">A:迁移后稍微打一点进度，然后就可以开启云存档了。</Run><LineBreak/>
                             <Run Foreground="DarkBlue">Q:迁移成功后，可以把成就同步到Steam里吗？</Run><LineBreak/>
                             <Run Foreground="Green">A:可以。进入游戏后选择存档，在主菜单选择统计数据→成就，Steam成就就会弹出来了。</Run><LineBreak/>
-                            <LineBreak/>
+                            <Run Foreground="DarkBlue">Q:我可以把忏悔+存档迁移到忏悔吗？</Run><LineBreak/>
+                            <Run Foreground="Green">A:很遗憾，不能。忏悔存档转换为忏悔+存档是单向过程，不可逆。</Run><LineBreak/>
+                             <LineBreak/>
                             <Run FontWeight="Bold" FontSize="17">如果存档迁移失败，请逐个排查以下可能导致错误的问题：</Run>
                             <LineBreak/>
                             1.没有<Run Foreground="Red">关闭</Run>Steam中以撒的云同步。<LineBreak/>

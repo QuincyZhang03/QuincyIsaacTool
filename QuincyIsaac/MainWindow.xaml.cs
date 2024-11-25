@@ -417,10 +417,11 @@ namespace QuincyIsaac
             Button button = sender as Button;
             if (button != null)
             {
-                LoadedHackerSavePos codex = new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote");
-                LoadedHackerSavePos goldberg = new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote");
-
-                LoadedHackerSavePos[] datalist = { codex, goldberg };
+                LoadedHackerSavePos[] datalist = {
+                    new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote"),
+                    new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
+                    new LoadedHackerSavePos("GSE", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote")
+                };
                 list_LoadedHackerSave.ItemsSource = datalist;
                 int num_found = 0;
                 foreach (LoadedHackerSavePos poses in datalist)
