@@ -11,9 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-/*
-剪切板，修改失败异常，记忆功能
- */
+
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
