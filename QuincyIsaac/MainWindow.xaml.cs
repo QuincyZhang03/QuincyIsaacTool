@@ -11,7 +11,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-
+/*
+剪切板，修改失败异常，记忆功能
+ */
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
@@ -26,6 +28,8 @@ namespace QuincyIsaac
 
         readonly string CONFIG_PATH_PLUS = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance+\\options.ini";
+        readonly string REG_GAME_VER_KEY = "DefaultGameVer";
+        readonly RegistryKey registry = Registry.CurrentUser.CreateSubKey("SOFTWARE\\QuincyIsaacTool");
 
         const int NORMAL_HEIGHT = 170;
         const int EXPANDED_HEIGHT = 350;
@@ -43,15 +47,18 @@ namespace QuincyIsaac
             MAJOR_VERSION = int.Parse(VERSION[0]);
             MINOR_VERSION = int.Parse(VERSION[1]);
             AMEND_VERSION = int.Parse(VERSION[2]);
+            string displayed_amend_version = AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION;
+
             InitializeComponent();
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
             Top = (SystemParameters.WorkArea.Height - Height) / 2 - 100;
-
-            string displayed_amend_version = AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION;
             Title = $"夏老师的以撒快捷开关 V{MAJOR_VERSION}.{MINOR_VERSION}{displayed_amend_version}";
 
             rep_exists = File.Exists(CONFIG_PATH);
             plus_exists = File.Exists(CONFIG_PATH_PLUS);
+            ver_rep.IsEnabled = rep_exists;
+            ver_plus.IsEnabled = plus_exists;
+
             if (!rep_exists && !plus_exists)
             {
                 MessageBox.Show($"对不起，程序未能在路径{CONFIG_PATH}或{CONFIG_PATH_PLUS}下找到游戏配置文件options.ini！\n" +
@@ -62,23 +69,57 @@ namespace QuincyIsaac
             }
             else
             {
-                ver_rep.IsEnabled = rep_exists;
-                ver_plus.IsEnabled = plus_exists;
-                if (rep_exists)
+                int defaultGameVer;
+                if (registry != null)
                 {
-                    ver_rep.IsChecked = true;
-                    active_option = CONFIG_PATH;
+                    object regData = registry.GetValue(REG_GAME_VER_KEY);
+                    if (regData is int v)
+                    {
+                        defaultGameVer = v;
+                    }
+                    else //数据被篡改或为null，置1
+                    {
+                        defaultGameVer = 1;
+                        registry.SetValue(REG_GAME_VER_KEY, 1);
+                    }
+
+                    if (defaultGameVer == 1 && rep_exists)
+                    {
+                        ver_rep.IsChecked = true;
+                        CheckRep(false);
+                    }
+                    else if (defaultGameVer == 2 && plus_exists)
+                    {
+                        ver_plus.IsChecked = true;
+                        CheckPlus(false);
+                    }
+                    else //注册表默认版本不再存在，有什么选什么，并对注册表进行修正
+                    {
+                        if (rep_exists)
+                        {
+                            ver_rep.IsChecked = true;
+                            CheckRep();
+                        }
+                        else
+                        {
+                            ver_plus.IsChecked = true;
+                            CheckPlus();
+                        }
+                    }
                 }
-                else
+                else //registry为空，跳过所有跟注册表相关的逻辑，有什么选什么。
+                     //但一般情况下不会出现这种情况。
                 {
-                    ver_plus.IsChecked = true;
-                    active_option = CONFIG_PATH_PLUS;
+                    if (rep_exists)
+                        ver_rep.IsChecked = true;
+                    else
+                        ver_plus.IsChecked = true;
                 }
             }
 
             if (IsIsaacLaunched())
             {
-                MessageBox.Show("检测到以撒的结合正在运行，为防止配置文件出错，请先关闭游戏后再使用本程序。", "游戏正在运行", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("检测到以撒的结合正在运行，为防止配置文件出错，建议先关闭游戏后再使用本程序。", "游戏正在运行", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             ReloadSettings();
         }
@@ -166,10 +207,10 @@ namespace QuincyIsaac
         {
             int prefindex = source.IndexOf(pref);
             int suffindex = source.IndexOf(suff);
-            Console.WriteLine(prefindex + " " + suffindex);
+            //Console.WriteLine(prefindex + " " + suffindex);
             if (prefindex == -1 || suffindex == -1 || prefindex >= suffindex)
             {
-                Console.WriteLine(source);
+                //Console.WriteLine(source);
                 return null;
             }
             int startindex = prefindex + pref.Length;
@@ -187,8 +228,19 @@ namespace QuincyIsaac
         {
             string newcontent = Regex.Replace(original_content, original_key, replacement);
             StreamWriter writer = new StreamWriter(active_option, false);
-            writer.Write(newcontent);
-            writer.Close();
+            try
+            {
+                writer.Write(newcontent);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("修改配置文件失败！\n异常信息：\n" + ex, "更改配置失败");
+            }
+            finally
+            {
+                writer.Close();
+            }
+
             return newcontent;
         }
         private bool IsIsaacLaunched()
@@ -222,6 +274,7 @@ namespace QuincyIsaac
                 Close();
             }
         }
+        
         private void ModifySetting(string key, bool enabled, TextBlock callback, string setting_name)
         {
             if (!initialized) return;
@@ -361,7 +414,7 @@ namespace QuincyIsaac
 
         private void file_name_text_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Clipboard.SetText("rep_persistentgamedata1.dat");
+            Clipboard.SetDataObject("rep_persistentgamedata1.dat");
             MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
                 , MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -462,18 +515,37 @@ namespace QuincyIsaac
             tab_root.SelectedItem = other_settings;
         }
 
-        private void ver_rep_Checked(object sender, RoutedEventArgs e)
+        private void CheckRep(bool updateReg = true)
         {
             active_option = CONFIG_PATH;
             OpenBackupDirectory.Content = "备份存档目录(忏悔)";
-            ReloadSettings();
+            if (updateReg && registry != null)
+                registry.SetValue(REG_GAME_VER_KEY, 1);
+        }
+        private void CheckPlus(bool updateReg = true)
+        {
+            active_option = CONFIG_PATH_PLUS;
+            OpenBackupDirectory.Content = "备份存档目录(忏悔+)";
+            if (updateReg && registry != null)
+                registry.SetValue(REG_GAME_VER_KEY, 2);
+        }
+
+        private void ver_rep_Checked(object sender, RoutedEventArgs e)
+        {
+            if (initialized)
+            {
+                CheckRep();
+                ReloadSettings();
+            }
         }
 
         private void ver_plus_Checked(object sender, RoutedEventArgs e)
         {
-            active_option = CONFIG_PATH_PLUS;
-            OpenBackupDirectory.Content = "备份存档目录(忏悔+)";
-            ReloadSettings();
+            if (initialized)
+            {
+                CheckPlus();
+                ReloadSettings();
+            }
         }
 
         private void link_download_Click(object sender, RoutedEventArgs e)
