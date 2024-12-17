@@ -175,7 +175,7 @@
                             如找到，根据“迁移到正版”中指示的第四条进行存档替换即可。如未找到，可以尝试联系我，也能为完善该程序做出贡献。
                             </TextBlock>
                             <Button VerticalAlignment="Center" FontSize="13" Padding="0,5" Margin="120,10,120,10" Name="SearchLoadedHackerSave" Click="SearchLoadedHackerSave_Click">查找</Button>
-                            <ListView Name="list_LoadedHackerSave" MinHeight="125" MaxHeight="125">
+                            <ListView Name="list_LoadedHackerSave" MinHeight="105" MaxHeight="105">
                                 <ListView.Resources>
                                     <Style x:Key="UnResizable" TargetType="GridViewColumnHeader">
                                         <Setter Property="IsEnabled" Value="False" />

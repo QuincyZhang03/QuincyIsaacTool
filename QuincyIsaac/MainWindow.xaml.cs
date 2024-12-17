@@ -11,7 +11,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-
+/*
+ 修复盗版存档列表滚动UI，修复手动删除配置文件导致崩溃
+ */
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
@@ -176,11 +178,7 @@ namespace QuincyIsaac
             }
             catch
             {
-                tab_update.Dispatcher.Invoke((Action)(() =>
-                {
-                    tab_update.IsEnabled = false;
-
-                }));
+                tab_update.Dispatcher.Invoke(new Action(() => tab_update.IsEnabled = false));
             }
 
         }
@@ -217,17 +215,27 @@ namespace QuincyIsaac
 
         private string GetConfigContent()
         {
-            StreamReader reader = new StreamReader(active_option);
-            string config = reader.ReadToEnd();
-            reader.Close();
-            return config;
+            StreamReader reader = null;
+            try
+            {
+                reader = new StreamReader(active_option);
+                string config = reader.ReadToEnd();
+                reader.Close();
+                return config;
+            }
+            catch
+            {
+                if (reader != null) reader.Close();
+                return null;
+            }
         }
         private string ExecuteContentReplacement(string original_key, string replacement)
         {
             string newcontent = Regex.Replace(original_content, original_key, replacement);
-            StreamWriter writer = new StreamWriter(active_option, false);
+            StreamWriter writer = null;
             try
             {
+                writer = new StreamWriter(active_option, false);
                 writer.Write(newcontent);
             }
             catch (Exception ex)
@@ -236,9 +244,8 @@ namespace QuincyIsaac
             }
             finally
             {
-                writer.Close();
+                if (writer != null) writer.Close();
             }
-
             return newcontent;
         }
         private bool IsIsaacLaunched()
@@ -272,15 +279,15 @@ namespace QuincyIsaac
                 Close();
             }
         }
-        
+
         private void ModifySetting(string key, bool enabled, TextBlock callback, string setting_name)
         {
             if (!initialized) return;
             string value = enabled ? "1" : "0";
-            string newcontent = ExecuteContentReplacement($"{key}=\\d", $"{key}={value}");
-            original_content = newcontent;
+            original_content = ExecuteContentReplacement($"{key}=\\d", $"{key}={value}");
+            string newFileContent = GetConfigContent();
 
-            if (original_content == GetConfigContent()) //校验
+            if (original_content == newFileContent) //校验
             {
                 if (enabled)
                 {
@@ -293,9 +300,9 @@ namespace QuincyIsaac
                     callback.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 255));
                 }
             }
-            else
+            else if (newFileContent != null) //为null说明文件被删除，已经报过错了。此处仅为校验不通过的报错。
             {
-                MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("很抱歉，向options.ini文件中写入数据失败！", "写入配置校验失败", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
