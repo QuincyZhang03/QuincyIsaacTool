@@ -12,7 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 /*
- 修复盗版存档列表滚动UI，修复手动删除配置文件导致崩溃
+ 修复盗版存档列表滚动UI，修复手动删除配置文件导致崩溃，消除“游戏版本选择”歧义，新图标
+ 修改了迁移到忏悔的说明
  */
 namespace QuincyIsaac
 {
@@ -182,6 +183,7 @@ namespace QuincyIsaac
             }
 
         }
+        
         private bool HasNewerVersion(int majorVer, int minorVer, int amendVer)
         {
             if (majorVer > MAJOR_VERSION)

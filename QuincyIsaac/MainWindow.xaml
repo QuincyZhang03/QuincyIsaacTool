@@ -38,7 +38,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Center">
-            <TextBlock VerticalAlignment="Center" FontWeight="Bold" FontSize="14">游戏版本选择</TextBlock>
+            <TextBlock VerticalAlignment="Center" FontWeight="Bold" FontSize="14">配置文件游戏版本选择</TextBlock>
             <Separator Background="Transparent" Width="25"/>
             <RadioButton VerticalAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="14" GroupName="Version" Name="ver_rep" Checked="ver_rep_Checked" Style="{StaticResource versions}">忏悔</RadioButton>
             <Separator Background="Transparent" Width="20"/>
@@ -148,9 +148,9 @@
                                 参考本说明第一条修改文件名进行替换即可。重生无前缀，胎衣前缀为ab_，胎衣+前缀为abp_，忏悔前缀为rep_，忏悔+前缀为rep+。
                             <LineBreak />
                             <Run Foreground="DeepPink" FontWeight="Bold" FontSize="17">
-                                五、关于忏悔+</Run>
+                                五、忏悔存档迁移到忏悔+</Run>
                             <LineBreak />
-                                如果要把存档迁移到忏悔+，只需迁移到忏悔即可。启动忏悔+时，游戏会自动将忏悔存档导入到忏悔+。
+                                如果要把存档迁移到忏悔+，先按照本说明前几条将存档迁移到忏悔。然后，确保正版存档目录没有任何忏悔+存档（如有，将其全部删除）。最后启动忏悔+，游戏会自动将忏悔存档导入到忏悔+。
                             </TextBlock>
                             
                                 
