@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -9,11 +11,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
-/*
- 更新内容：加入RUNE盗版存档；完善GSE盗版存档SteamID选择过滤器；
- */
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
@@ -182,7 +182,7 @@ namespace QuincyIsaac
             }
 
         }
-        
+
         private bool HasNewerVersion(int majorVer, int minorVer, int amendVer)
         {
             if (majorVer > MAJOR_VERSION)
@@ -476,16 +476,17 @@ namespace QuincyIsaac
             Button button = sender as Button;
             if (button != null)
             {
-                LoadedHackerSavePos[] datalist = {
+                ObservableCollection<LoadedHackerSavePos> dataList = new ObservableCollection<LoadedHackerSavePos>
+                {
                     new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote"),
                     new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
                     new LoadedHackerSavePos("GSE", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote"),
                     new LoadedHackerSavePos("GSE0", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\0\\remote"),
                     new LoadedHackerSavePos("RUNE", "C:\\Users\\Public\\Documents\\Steam\\RUNE\\250900\\remote")
                 };
-                list_LoadedHackerSave.ItemsSource = datalist;
+                list_LoadedHackerSave.ItemsSource = dataList;
                 int num_found = 0;
-                foreach (LoadedHackerSavePos poses in datalist)
+                foreach (LoadedHackerSavePos poses in dataList)
                 {
                     if (poses.Exists)
                     {
@@ -502,6 +503,7 @@ namespace QuincyIsaac
                     button.Content = $"找到{num_found}个";
                     button.Foreground = Brushes.Violet;
                 }
+                CollectionViewSource.GetDefaultView(list_LoadedHackerSave.ItemsSource).SortDescriptions.Add(new SortDescription("Exists", ListSortDirection.Descending));
             }
         }
 
