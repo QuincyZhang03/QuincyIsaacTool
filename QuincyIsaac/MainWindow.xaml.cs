@@ -12,8 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 /*
- 修复盗版存档列表滚动UI，修复手动删除配置文件导致崩溃，消除“游戏版本选择”歧义，新图标
- 修改了迁移到忏悔的说明
+ 更新内容：加入RUNE盗版存档；完善GSE盗版存档SteamID选择过滤器；
  */
 namespace QuincyIsaac
 {
@@ -480,7 +479,9 @@ namespace QuincyIsaac
                 LoadedHackerSavePos[] datalist = {
                     new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote"),
                     new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
-                    new LoadedHackerSavePos("GSE", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote")
+                    new LoadedHackerSavePos("GSE", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote"),
+                    new LoadedHackerSavePos("GSE0", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\0\\remote"),
+                    new LoadedHackerSavePos("RUNE", "C:\\Users\\Public\\Documents\\Steam\\RUNE\\250900\\remote")
                 };
                 list_LoadedHackerSave.ItemsSource = datalist;
                 int num_found = 0;
@@ -499,6 +500,7 @@ namespace QuincyIsaac
                 else
                 {
                     button.Content = $"找到{num_found}个";
+                    button.Foreground = Brushes.Violet;
                 }
             }
         }

@@ -13,7 +13,8 @@ namespace QuincyIsaac
         bool result = false;
         bool needToShow = false;
 
-        public bool Result {
+        public bool Result
+        {
             get
             {
                 return result;
@@ -41,7 +42,20 @@ namespace QuincyIsaac
             }
             foreach (string dir in dirs)
             {
-                SteamIDComboBox.Items.Add(dir.Substring(dir.LastIndexOf("\\") + 1));
+                string e_id = dir.Substring(dir.LastIndexOf("\\") + 1);
+                bool isValidID = true;
+                foreach (char c in e_id)
+                {
+                    if (c < '0' || c > '9')
+                    {
+                        isValidID = false;
+                        break;
+                    }
+                }
+                if (isValidID)
+                {
+                    SteamIDComboBox.Items.Add(e_id);
+                }
             }
             if (SteamIDComboBox.Items.Count == 1)
             {
@@ -60,7 +74,8 @@ namespace QuincyIsaac
                 returnSteamID((string)SteamIDComboBox.SelectedItem);
                 result = true;
                 Close();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -68,7 +83,7 @@ namespace QuincyIsaac
 
         private void HowToFindID_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("点击Steam主界面左上角的Steam→设置，在打开的界面就可以看到\"好友代码\"一栏。","如何查看好友码");
+            MessageBox.Show("点击Steam主界面左上角的Steam→设置，在打开的界面就可以看到\"好友代码\"一栏。", "如何查看好友码");
         }
     }
 }
