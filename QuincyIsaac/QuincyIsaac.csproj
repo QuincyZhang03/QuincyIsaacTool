@@ -53,10 +53,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>C7190A070154978EDA2586522D671B6869D25900</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>CE9B65BE88B64FB1D28995E4D9B54989E8570376</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>QuincyIsaac_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Certificate\QuincyIsaac_2025_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -78,6 +78,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -95,6 +96,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ProgramVersion.cs" />
+    <Compile Include="SaveTransferModule\SaveData.cs" />
+    <Compile Include="SaveTransferModule\SaveManagement.xaml.cs">
+      <DependentUpon>SaveManagement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SaveTransferModule\TransferVerifier.cs" />
+    <Compile Include="SaveTransferModule\Win32Helper.cs" />
     <Compile Include="SteamIDSelection.xaml.cs">
       <DependentUpon>SteamIDSelection.xaml</DependentUpon>
     </Compile>
@@ -110,6 +119,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SaveTransferModule\SaveManagement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SteamIDSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -138,11 +151,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="QuincyIsaac_1_TemporaryKey.pfx" />
-    <None Include="QuincyIsaac_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon.ico" />
+    <Resource Include="Resources\saveicons\ab.png" />
+    <Resource Include="Resources\saveicons\abp.png" />
+    <Resource Include="Resources\saveicons\rebirth.png" />
+    <Resource Include="Resources\saveicons\rep.png" />
+    <Resource Include="Resources\saveicons\repplus.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -150,6 +166,15 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\saveicons\empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\saveicons\unknown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trashbin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

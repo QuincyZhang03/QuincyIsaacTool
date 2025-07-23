@@ -1,38 +1,28 @@
 ﻿using Microsoft.Win32;
+using QuincyIsaac.SaveTransferModule;
 using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Media;
 namespace QuincyIsaac
 {
     public partial class MainWindow : Window
     {
         const string UPDATE_CHECK_WEBSITE = "https://gitee.com/quincyzhang/quincy-isaac-tool-ver/blob/master/version.txt";
-        readonly int MAJOR_VERSION;
-        readonly int MINOR_VERSION;
-        readonly int AMEND_VERSION;
 
-        readonly string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
+        public static readonly string CONFIG_PATH = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance\\options.ini";
 
-        readonly string CONFIG_PATH_PLUS = Environment.GetEnvironmentVariable("USERPROFILE")
+        public static readonly string CONFIG_PATH_PLUS = Environment.GetEnvironmentVariable("USERPROFILE")
             + "\\Documents\\My Games\\Binding of Isaac Repentance+\\options.ini";
         readonly string REG_GAME_VER_KEY = "DefaultGameVer";
         readonly RegistryKey registry = Registry.CurrentUser.CreateSubKey("SOFTWARE\\QuincyIsaacTool");
-
-        const int NORMAL_HEIGHT = 170;
-        const int EXPANDED_HEIGHT = 350;
 
         string active_option;
         string original_content;
@@ -40,19 +30,12 @@ namespace QuincyIsaac
         readonly bool rep_exists;
         readonly bool plus_exists;
         bool initialized = false;
-        string steamID;
         public MainWindow()
         {
-            string[] VERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion.Split('.');
-            MAJOR_VERSION = int.Parse(VERSION[0]);
-            MINOR_VERSION = int.Parse(VERSION[1]);
-            AMEND_VERSION = int.Parse(VERSION[2]);
-            string displayed_amend_version = AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION;
-
             InitializeComponent();
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
             Top = (SystemParameters.WorkArea.Height - Height) / 2 - 100;
-            Title = $"夏老师的以撒快捷开关 V{MAJOR_VERSION}.{MINOR_VERSION}{displayed_amend_version}";
+            DataContext = ProgramVersion.version;
 
             rep_exists = File.Exists(CONFIG_PATH);
             plus_exists = File.Exists(CONFIG_PATH_PLUS);
@@ -127,7 +110,7 @@ namespace QuincyIsaac
         private void ReloadSettings()
         {
             initialized = false;
-            original_content = GetConfigContent();
+            original_content = GetConfigContent(active_option);
             LoadSetting("EnableMods", mody, modn);
             LoadSetting("EnableDebugConsole", cony, conn);
             LoadSetting("MouseControl", mousey, mousen);
@@ -160,7 +143,7 @@ namespace QuincyIsaac
                 tab_update.Dispatcher.Invoke(new Action(() =>
                 {
                     p_update_all_content.Visibility = Visibility.Visible;
-                    if (HasNewerVersion(majorVer, minorVer, amendVer))
+                    if (ProgramVersion.version.HasNewerVersion(majorVer, minorVer, amendVer))
                     {
                         tab_update.Background = Brushes.YellowGreen;
                         l_version_title.Text = "发现新版本:";
@@ -183,23 +166,6 @@ namespace QuincyIsaac
 
         }
 
-        private bool HasNewerVersion(int majorVer, int minorVer, int amendVer)
-        {
-            if (majorVer > MAJOR_VERSION)
-            {
-                return true;
-            }
-            if (majorVer == MAJOR_VERSION && minorVer > MINOR_VERSION)
-            {
-                return true;
-            }
-            if (majorVer == MAJOR_VERSION && minorVer == MINOR_VERSION && amendVer > AMEND_VERSION)
-            {
-                return true;
-            }
-            return false;
-        }
-
         private string GetMidString(string source, string pref, string suff)
         {
             int prefindex = source.IndexOf(pref);
@@ -214,12 +180,12 @@ namespace QuincyIsaac
             return source.Substring(startindex, suffindex - startindex);
         }
 
-        private string GetConfigContent()
+        public static string GetConfigContent(string path)
         {
             StreamReader reader = null;
             try
             {
-                reader = new StreamReader(active_option);
+                reader = new StreamReader(path);
                 string config = reader.ReadToEnd();
                 reader.Close();
                 return config;
@@ -230,14 +196,13 @@ namespace QuincyIsaac
                 return null;
             }
         }
-        private string ExecuteContentReplacement(string original_key, string replacement)
+        public static void WriteToFile(string path, string content)
         {
-            string newcontent = Regex.Replace(original_content, original_key, replacement);
             StreamWriter writer = null;
             try
             {
-                writer = new StreamWriter(active_option, false);
-                writer.Write(newcontent);
+                writer = new StreamWriter(path, false);
+                writer.Write(content);
             }
             catch (Exception ex)
             {
@@ -247,8 +212,14 @@ namespace QuincyIsaac
             {
                 if (writer != null) writer.Close();
             }
+        }
+        private string ExecuteContentReplacement(string original_key, string replacement)
+        {
+            string newcontent = Regex.Replace(original_content, original_key, replacement);
+            WriteToFile(active_option, newcontent);
             return newcontent;
         }
+
         private bool IsIsaacLaunched()
         {
             Process[] processes = Process.GetProcesses();
@@ -281,12 +252,13 @@ namespace QuincyIsaac
             }
         }
 
+
         private void ModifySetting(string key, bool enabled, TextBlock callback, string setting_name)
         {
             if (!initialized) return;
             string value = enabled ? "1" : "0";
             original_content = ExecuteContentReplacement($"{key}=\\d", $"{key}={value}");
-            string newFileContent = GetConfigContent();
+            string newFileContent = GetConfigContent(active_option);
 
             if (original_content == newFileContent) //校验
             {
@@ -327,102 +299,9 @@ namespace QuincyIsaac
             ModifySetting("EnableDebugConsole", false, l_con, "控制台");
         }
 
-        private void OpenBackupDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("盗版存档一般在\"我的文档\"下的\"My Games\"目录下查找，但不同的盗版可能存档路径不同。\n点击\"确定\"继续查找，如未找到，请手动查找。\n\n注意：如果要把存档迁移到盗版游戏里，请不要试图覆盖此处的任何文件，而应该尝试使用“迁移到盗版”选项卡中的功能。", "准备查找"
-                , MessageBoxButton.OK, MessageBoxImage.Information);
-            Process.Start("explorer.exe", active_option.Substring(0, active_option.LastIndexOf("\\")));
-        }
-
-
-        private void OpenSteamVersionDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            string path = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Valve\\Steam", "InstallPath", null);
-            if (path != null)
-            {
-                path += "\\userdata";
-            }
-            bool success = false;
-
-            if (Directory.Exists(path))
-            {
-                SteamIDSelection selection = new SteamIDSelection(path, (id) => steamID = id);
-                if (selection.NeedToShow)
-                {
-                    selection.Owner = this;
-                    selection.ShowDialog();
-                }
-                success = selection.Result;
-            }
-            if (!success)
-            {
-                return;
-            }
-            path += $"\\{steamID}\\250900\\remote";
-            if (Directory.Exists(path))
-            {
-                Process.Start("explorer.exe", path);
-            }
-            else
-            {
-                MessageBox.Show($"抱歉，在SteamID{steamID}下未找到以撒文件夹。\n试图寻找的路径为：\n{path}\n注意：如果您刚购买游戏/DLC还从未运行过，请至少运行一次。",
-                    "未查找到目录", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private void link_github_repo_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/QuincyZhang03/QuincyIsaacTool"));
-        }
-
-        private void link_tieba2_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405?pid=148619573223#148619573223"));
-        }
-
-        private void tab_root_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            TabControl tabControl = sender as TabControl;
-            if (tabControl != null)
-            {
-                TabItem item = tabControl.SelectedItem as TabItem;
-                if (item != null)
-                {
-                    if (item.Name == "save_replace")
-                    {
-                        Height = EXPANDED_HEIGHT;
-                    }
-                    else
-                    {
-                        Height = NORMAL_HEIGHT;
-                    }
-                }
-            }
-        }
-
-        private void file_name_text_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Run run)
-            {
-                run.TextDecorations = TextDecorations.Underline;
-                run.Foreground = Brushes.Red;
-            }
-        }
-
-        private void file_name_text_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Run run)
-            {
-                run.TextDecorations = null;
-                run.Foreground = Brushes.BlueViolet;
-            }
-        }
-
-        private void file_name_text_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Clipboard.SetDataObject("rep_persistentgamedata1.dat");
-            MessageBox.Show("已将\"rep_persistentgamedata1.dat\"复制到剪切板！\n如需要对应存档栏位2，将1改为2即可。", "复制成功"
-                , MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void mousey_Checked(object sender, RoutedEventArgs e)
@@ -445,98 +324,20 @@ namespace QuincyIsaac
             ModifySetting("SteamCloud", false, l_cloud, "云存档");
         }
 
-        private void link_demonstration_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://www.bilibili.com/video/BV1nQ4y1u7sM/"));
-        }
-
         private void link_tieba_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://tieba.baidu.com/p/8485174405"));
         }
 
-        private void link_demonstration_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Hyperlink hyperlink)
-            {
-                hyperlink.Foreground = Brushes.Red;
-            }
-        }
-
-        private void link_demonstration_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is Hyperlink hyperlink)
-            {
-                hyperlink.Foreground = Brushes.Blue;
-            }
-        }
-
-        private void SearchLoadedHackerSave_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            if (button != null)
-            {
-                ObservableCollection<LoadedHackerSavePos> dataList = new ObservableCollection<LoadedHackerSavePos>
-                {
-                    new LoadedHackerSavePos("CODEX", "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote"),
-                    new LoadedHackerSavePos("Goldberg", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
-                    new LoadedHackerSavePos("GSE", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote"),
-                    new LoadedHackerSavePos("GSE0", Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\0\\remote"),
-                    new LoadedHackerSavePos("RUNE", "C:\\Users\\Public\\Documents\\Steam\\RUNE\\250900\\remote")
-                };
-                list_LoadedHackerSave.ItemsSource = dataList;
-                int num_found = 0;
-                foreach (LoadedHackerSavePos poses in dataList)
-                {
-                    if (poses.Exists)
-                    {
-                        num_found++;
-                    }
-                }
-                button.IsEnabled = false;
-                if (num_found == 0)
-                {
-                    button.Content = "无结果";
-                }
-                else
-                {
-                    button.Content = $"找到{num_found}个";
-                    button.Foreground = Brushes.Violet;
-                }
-                CollectionViewSource.GetDefaultView(list_LoadedHackerSave.ItemsSource).SortDescriptions.Add(new SortDescription("Exists", ListSortDirection.Descending));
-            }
-        }
-
-        private void VisitLoadedHackerSave_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            if (button == null)
-            {
-                return;
-            }
-            LoadedHackerSavePos savepos = button.DataContext as LoadedHackerSavePos;
-            if (savepos != null)
-            {
-                Process.Start("explorer.exe", savepos.Path);
-            }
-        }
-
-        private void OtherSettingsLink_Click(object sender, RoutedEventArgs e)
-        {
-            tab_root.SelectedItem = other_settings;
-        }
-
         private void CheckRep(bool updateReg = true)
         {
             active_option = CONFIG_PATH;
-            OpenBackupDirectory.Content = "备份存档目录(忏悔)";
             if (updateReg && registry != null)
                 registry.SetValue(REG_GAME_VER_KEY, 1);
         }
         private void CheckPlus(bool updateReg = true)
         {
             active_option = CONFIG_PATH_PLUS;
-            OpenBackupDirectory.Content = "备份存档目录(忏悔+)";
             if (updateReg && registry != null)
                 registry.SetValue(REG_GAME_VER_KEY, 2);
         }
@@ -569,32 +370,13 @@ namespace QuincyIsaac
             p_update_all_content.Visibility = Visibility.Hidden;
             new Thread(Update).Start();
         }
-    }
-    public class LoadedHackerSavePos
-    {
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public bool Exists
-        {
-            get
-            {
-                return Directory.Exists(Path);
-            }
-        }
-        public string Result
-        {
-            get
-            {
-                return Exists ? "找到存档" : "无";
-            }
-        }
-        public LoadedHackerSavePos(string name, string path)
-        {
-            Name = name;
-            Path = path;
-        }
-    }
 
+        private void Button_OpenSaveManagement_Click(object sender, RoutedEventArgs e)
+        {
+            new SaveManagement().Show();
+            Close();
+        }
+    }
     class TimedWebClient : WebClient
     {
         protected override WebRequest GetWebRequest(Uri address)
@@ -605,3 +387,4 @@ namespace QuincyIsaac
         }
     }
 }
+

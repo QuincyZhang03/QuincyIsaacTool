@@ -1,0 +1,252 @@
+﻿<Window x:Class="QuincyIsaac.SaveTransferModule.SaveManagement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuincyIsaac.SaveTransferModule"
+        mc:Ignorable="d" Title="夏老师的以撒存档管理器" Height="580" Width="1100" ResizeMode="CanMinimize" Closing="Window_Closing">
+    <Grid Background="#F5F5F5">
+        <Grid.Resources>
+            <Style TargetType="GroupBox">
+                <Setter Property="Margin" Value="8" />
+            </Style>
+            <Style TargetType="ListBox">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding CanInteract}" Value="True">
+                        <Setter Property="BorderBrush" Value="Green" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding CanInteract}" Value="False">
+                        <Setter Property="BorderBrush" Value="Red" />
+                        <Setter Property="Opacity" Value="0.4" />
+                    </DataTrigger>
+                </Style.Triggers>
+                <Setter Property="BorderThickness" Value="3" />
+                <Setter Property="MaxHeight" Value="100" />
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+                <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+                <!--平滑滚动-->
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <!--横向排列-->
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemTemplate">
+                    <!--每个列表项内容的格式-->
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Border Width="70" HorizontalAlignment="Center" ToolTipService.InitialShowDelay="50" ToolTip="{Binding ToolTip}" MouseDown="OnSaveSelected" AllowDrop="{Binding DataContext.IsPartActive,RelativeSource={RelativeSource AncestorType=ListBox}}" Drop="OnSaveDrop">
+                                <!--ListBoxItem不会继承ListBox的DataContext，需要显式指定寻找ListBox的DataContext。
+                                此外，这里的Source是一个组件，而不是DataContext，因此需要写明找的是DataContext.IsPartActive-->
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="3*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Image Stretch="Uniform" MaxWidth="60" MaxHeight="60" Source="{Binding Image}" />
+                                    <TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Center" Grid.Row="1" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemContainerStyle">
+                    <!--每个列表项容器的格式-->
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                            <Setter Property="Margin" Value="2" />
+                            <Setter Property="MaxWidth" Value="70" />
+                            <Setter Property="MaxHeight" Value="80" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <GroupBox Name="Group_HackerSave" Grid.Row="0" Grid.Column="0">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="15" FontWeight="Bold" Text="盗版存档目录" />
+                    <Button Click="Button_OpenHackerPath_Click" Name="Button_OpenHackerPath" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="打开" Margin="20,0,0,0" Padding="7,1"/>
+                    <Button Click="Button_ReloadHackerPath_Click"  Name="Button_ReloadHackerPath" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="刷新" Margin="10,0,0,0" Padding="7,1"/>
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="5*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="选择目录" Grid.Column="0" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <ComboBox Name="ComboBox_HackerPath" SelectionChanged="ComboBox_HackerPath_SelectionChanged" Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Display}" >
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Latest}" Value="True">
+                                                    <Setter Property="Foreground" Value="Green" />
+                                                    <Setter Property="FontWeight" Value="Bold" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+
+
+                <ListBox SelectionChanged="List_SelectionChanged" Grid.Row="2" Margin="20,10" Name="List_HackerSave" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Name="Group_SteamSave"  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2">
+
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="15" FontWeight="Bold" Text="Steam正版存档目录" />
+                    <Button Click="Button_OpenSteamPath_Click"  Name="Button_OpenSteamPath" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="打开" Margin="20,0,0,0" Padding="7,1"/>
+                    <Button Click="Button_ReloadSteamPath_Click"  Name="Button_ReloadSteamPath" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="刷新" Margin="10,0,0,0" Padding="7,1"/>
+                </StackPanel>
+            </GroupBox.Header>
+
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" x:Key="ListHeaderStyle">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Steam好友码" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
+                <ComboBox Name="ComboBox_SteamID" SelectionChanged="ComboBox_SteamID_SelectionChanged" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="150" Margin="30,0,0,0" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SteamID}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsaacFound}" Value="False">
+                                                <Setter Property="Foreground" Value="#C0C0C0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="4*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="重生存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="胎衣存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="胎衣+存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <ListBox SelectionChanged="List_SelectionChanged" Name="List_Rebirth" Grid.Row="1" Grid.Column="0" Margin="10,5" />
+                    <ListBox SelectionChanged="List_SelectionChanged" Name="List_AB" Grid.Row="1" Grid.Column="1" Margin="10,5" />
+                    <ListBox SelectionChanged="List_SelectionChanged" Name="List_ABP" Grid.Row="1" Grid.Column="2" Margin="10,5" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="忏悔存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="忏悔+存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <ListBox SelectionChanged="List_SelectionChanged" Name="List_Rep" Grid.Row="3" Grid.Column="0" Margin="10,5" Width="{Binding ActualWidth,ElementName=List_Rebirth}" />
+                    <ListBox SelectionChanged="List_SelectionChanged" Name="List_RepPlus" Grid.Row="3" Grid.Column="1" Margin="10,5" Width="{Binding ActualWidth,ElementName=List_Rebirth}" />
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Name="Group_GameBackup"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="15" FontWeight="Bold" Text="游戏自动备份（My Games）" />
+                    <Button Click="Button_OpenGameBackup_Click" Name="Button_OpenGameBackup" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="打开" Margin="20,0,0,0" Padding="7,1"/>
+                    <Button Click="Button_ReloadGameBackup_Click" Name="Button_ReloadGameBackup" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Content="刷新" Margin="10,0,0,0" Padding="7,1"/>
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ListBox SelectionChanged="List_SelectionChanged" Name="List_GameBackup" Grid.Row="0" Margin="10,6"/>
+                <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15">
+                    此处仅显示距离最新备份15天内的备份存档。如果需要更早的备份，可以打开目录手动选择。
+                </TextBlock>
+            </Grid>
+        </GroupBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="15,0,0,0" FontSize="14" VerticalAlignment="Center" Foreground="RoyalBlue" TextWrapping="Wrap">
+    可拖拽存档实现迁移，支持与外部文件系统进行交互。<LineBreak />即使显示为红色透明的位置也可以放入存档，系统会提示您的操作的可行性。
+            <LineBreak />迁移前，请关闭Steam软件里的Steam云。<LineBreak />
+            <Run FontWeight="Bold" Text="视频演示：" />
+            <Hyperlink Name="Link_Demo" Click="Link_Demo_Click" FontWeight="Bold">
+                <Hyperlink.Inlines>
+                    Bilibili观看
+                </Hyperlink.Inlines>
+                <Hyperlink.Style>
+                    <Style TargetType="Hyperlink">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Red" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Hyperlink.Style>
+            </Hyperlink>
+        </TextBlock>
+
+        <Grid Grid.Row="2" Grid.Column="2" Margin="30,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+            <Image Name="Image_Trashbin" Opacity="{Binding TrashbinOpacity}" AllowDrop="True" Drop="Image_Trashbin_Drop" Stretch="Uniform" Source="/Resources/trashbin.png" Margin="12,12,12,0" VerticalAlignment="Bottom" Grid.Row="0" />
+            <TextBlock Grid.Row="1" FontSize="18" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Run FontSize="18" FontWeight="Bold" Text="垃圾箱" />
+                <LineBreak />
+                <Run FontSize="11" Text="拖拽至此处删除存档" />
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Window>
