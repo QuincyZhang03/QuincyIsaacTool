@@ -245,6 +245,7 @@ namespace QuincyIsaac.SaveTransferModule
     {
         public double Size { get; } //单位为KB
         public DateTime ModifiedTime { get; }
+        public DateTime ModifiedTime_Date { get => ModifiedTime.Date; }
 
         public TextBlock ToolTip
         {

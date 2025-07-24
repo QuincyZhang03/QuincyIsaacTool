@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -73,6 +72,7 @@ namespace QuincyIsaac.SaveTransferModule
             InitializeComponent();
             Left = SystemParameters.PrimaryScreenWidth * GetDpiFactorX() / 2 - Width / 2;
             Top = SystemParameters.PrimaryScreenHeight * GetDpiFactorY() / 2 - Height / 2;
+            DataContext = ProgramVersion.version;
             InitContextAndSource();
             InitHackerPath();
             InitSteamPath();
@@ -196,8 +196,9 @@ namespace QuincyIsaac.SaveTransferModule
                         ListItemController.gameBackup.Add(save);
                     }
                 }
-                CollectionViewSource.GetDefaultView(List_GameBackup.ItemsSource).SortDescriptions.Add(new SortDescription("ModifiedTime", ListSortDirection.Descending));
-                CollectionViewSource.GetDefaultView(List_GameBackup.ItemsSource).SortDescriptions.Add(new SortDescription("SaveVersion", ListSortDirection.Ascending));
+                CollectionViewSource.GetDefaultView(List_GameBackup.ItemsSource).SortDescriptions.Add(new SortDescription("ModifiedTime_Date", ListSortDirection.Descending));
+                CollectionViewSource.GetDefaultView(List_GameBackup.ItemsSource).SortDescriptions.Add(new SortDescription("SaveVersion", ListSortDirection.Descending));
+                CollectionViewSource.GetDefaultView(List_GameBackup.ItemsSource).SortDescriptions.Add(new SortDescription("FullPath", ListSortDirection.Ascending));
             }
             ListInteractableController.NotifyUI();
         }

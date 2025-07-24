@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuincyIsaac.SaveTransferModule"
-        mc:Ignorable="d" Title="夏老师的以撒存档管理器" Height="580" Width="1100" ResizeMode="CanMinimize" Closing="Window_Closing">
+        mc:Ignorable="d" Title="{Binding SaveManagementTitle}" Height="580" Width="1100" ResizeMode="CanMinimize" Closing="Window_Closing">
     <Grid Background="#F5F5F5">
         <Grid.Resources>
             <Style TargetType="GroupBox">

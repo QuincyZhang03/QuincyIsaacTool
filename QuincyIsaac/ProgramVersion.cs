@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-
+/*排序逻辑优化*/
 namespace QuincyIsaac
 {
     public class ProgramVersion
@@ -11,9 +11,14 @@ namespace QuincyIsaac
         public int MINOR_VERSION;
         public int AMEND_VERSION;
 
-        public string DisplayedTitle
+        public string MainWindowTitle
         {
             get => $"夏老师的以撒配置存档管理器  V{MAJOR_VERSION}.{MINOR_VERSION}{(AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION)}";
+        }
+
+        public string SaveManagementTitle
+        {
+            get => $"夏老师的以撒存档管理器  V{MAJOR_VERSION}.{MINOR_VERSION}{(AMEND_VERSION == 0 ? "" : "." + AMEND_VERSION)}";
         }
 
         public ProgramVersion()
