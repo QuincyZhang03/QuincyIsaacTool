@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-/*排序逻辑优化*/
+
 namespace QuincyIsaac
 {
     public class ProgramVersion
