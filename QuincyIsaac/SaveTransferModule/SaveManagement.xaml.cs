@@ -24,6 +24,7 @@ namespace QuincyIsaac.SaveTransferModule
         private readonly HackerSavePos[] dataList = new HackerSavePos[]
                 {
                     new HackerSavePos( "C:\\Users\\Public\\Documents\\Steam\\CODEX\\250900\\remote"),
+                    new HackerSavePos( "C:\\Users\\Public\\Documents\\OnlineFix\\250900\\Saves"),
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote"),
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\0\\remote"),
