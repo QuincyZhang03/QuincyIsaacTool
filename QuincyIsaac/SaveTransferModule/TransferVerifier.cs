@@ -116,6 +116,8 @@ namespace QuincyIsaac.SaveTransferModule
                 steps.AppendLine("注意：每步完成后，请及时点击\"刷新\"按钮重新读取存档。");
                 if (TargetSlot.SlotType == SaveSlot.Type.Hacker)
                     steps.AppendLine("注意：如果您的盗版游戏不支持切换DLC版本，跨版本存档迁移过程可能无法完成。");
+                if (_innerSave == null)
+                    steps.AppendLine("当然，如果您了解自己在做什么，可以自行修改存档文件前缀后再次拖拽。");
                 return steps.ToString();
             }
             return null;
