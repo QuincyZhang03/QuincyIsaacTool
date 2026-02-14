@@ -146,12 +146,13 @@
                     <RowDefinition Height="5*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Steam好友码" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
-                <ComboBox Name="ComboBox_SteamID" SelectionChanged="ComboBox_SteamID_SelectionChanged" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="150" Margin="30,0,0,0" >
+                <ComboBox Name="ComboBox_SteamID" SelectionChanged="ComboBox_SteamID_SelectionChanged" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" MinWidth="160" Margin="30,0,0,0" >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SteamID}">
@@ -168,8 +169,9 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Button Name="Button_ReviewOperationTips" Click="Button_ReviewOperationTips_Click" IsEnabled="False" Grid.Row="0" Grid.Column="2" Margin="20,13" FontSize="14" Content="回看操作提示" />
 
-                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="4*" />
@@ -181,15 +183,15 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="重生存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="胎衣存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="胎衣+存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="重生存档（Rebirth）" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="胎衣存档（Afterbirth）" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="胎衣+存档（Afterbirth+）" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
                     <ListBox SelectionChanged="List_SelectionChanged" Name="List_Rebirth" Grid.Row="1" Grid.Column="0" Margin="10,5" />
                     <ListBox SelectionChanged="List_SelectionChanged" Name="List_AB" Grid.Row="1" Grid.Column="1" Margin="10,5" />
                     <ListBox SelectionChanged="List_SelectionChanged" Name="List_ABP" Grid.Row="1" Grid.Column="2" Margin="10,5" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="忏悔存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="忏悔+存档" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="忏悔存档（Repentance）" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="忏悔+存档（Repentance+）" Style="{StaticResource ResourceKey=ListHeaderStyle}"/>
                     <ListBox SelectionChanged="List_SelectionChanged" Name="List_Rep" Grid.Row="3" Grid.Column="0" Margin="10,5" Width="{Binding ActualWidth,ElementName=List_Rebirth}" />
                     <ListBox SelectionChanged="List_SelectionChanged" Name="List_RepPlus" Grid.Row="3" Grid.Column="1" Margin="10,5" Width="{Binding ActualWidth,ElementName=List_Rebirth}" />
                 </Grid>

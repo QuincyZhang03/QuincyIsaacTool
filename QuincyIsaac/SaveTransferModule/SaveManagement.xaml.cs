@@ -508,7 +508,9 @@ namespace QuincyIsaac.SaveTransferModule
                 {
                     if (verifier.MultipleStep)
                     {
-                        MessageBox.Show(this, route + "该迁移过程需要一个或多个步骤才能完成，请依次进行以下步骤：\n\n" + verifier.Message, "迁移步骤");
+                        MessageBox.Show(this, route + "该迁移过程需要一个或多个步骤才能完成，请依次进行以下步骤：\n\n" + verifier.Message + "\n关闭该对话框后，您可以单击\"回看操作提示\"按钮重新查看本说明。", "迁移步骤");
+                        GeneralUIController.OperationTips = "以下是您上一次跨版本迁移操作时的提示。\n" + route + "\n操作步骤：\n" + verifier.Message;
+                        Button_ReviewOperationTips.IsEnabled = true;
                     }
                     else
                     {
@@ -585,6 +587,14 @@ namespace QuincyIsaac.SaveTransferModule
         private void Link_Demo_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://www.bilibili.com/video/BV1nV8AzKEJh/"));
+        }
+
+        private void Button_ReviewOperationTips_Click(object sender, RoutedEventArgs e)
+        {
+            if (GeneralUIController.OperationTips != null)
+            {
+                MessageBox.Show(this, GeneralUIController.OperationTips, "回看操作提示");
+            }
         }
     }
 
@@ -674,6 +684,9 @@ namespace QuincyIsaac.SaveTransferModule
         public static ListInteractableController RepPlus = new ListInteractableController(ListItemController.steamRepplus);
         public static ListInteractableController GameBackup = new ListInteractableController(ListItemController.gameBackup, false);
         public static TrashbinController Trashbin = new TrashbinController();
+        public static string OperationTips = null;
+
+
     }
     public class ListItemController //控制各个列表中显示的内容
     {
