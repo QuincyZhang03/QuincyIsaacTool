@@ -28,6 +28,7 @@ namespace QuincyIsaac.SaveTransferModule
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\Goldberg SteamEmu Saves\\250900\\remote"),
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\250900\\remote"),
                     new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\GSE Saves\\0\\remote"),
+                    new HackerSavePos(Environment.GetEnvironmentVariable("USERPROFILE") + "\\AppData\\Roaming\\XDGAME\\250900\\remote"),
                     new HackerSavePos("C:\\Users\\Public\\Documents\\Steam\\RUNE\\250900\\remote")
                 };
         private readonly string[] backupDirNames = new string[] {
